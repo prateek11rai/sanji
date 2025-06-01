@@ -1,0 +1,4 @@
+site_name: Sanji Docs
+theme:
+  name: material
+site_url: https://prateekrai-atlan.github.io/sanji/
