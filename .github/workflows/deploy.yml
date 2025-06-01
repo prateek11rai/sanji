@@ -10,17 +10,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install uv
-        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12.2
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Configure Poetry
+        run: poetry config virtualenvs.in-project true
 
       - name: Install dependencies
-        run: uv install
+        run: poetry install --no-root
 
-      - name: Build site
-        run: mkdocs build
+      - name: Build docs
+        run: poetry run mkdocs build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
