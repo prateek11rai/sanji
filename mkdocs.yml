@@ -1,4 +1,82 @@
-site_name: Sanji Docs
+# Site Information
+site_name: Sanji
+site_url: https://prateekrai-atlan.github.io/sanji/
+site_author: Prateek Rai
+site_description: Sanji is a personal website for Prateek Rai. It is a collection of projects, blogs, personal notes/opinions, and other things.
+
+# Repository Information
+repo_name: sanji
+repo_url: https://github.com/prateekrai-atlan/sanji
+
+# Theme Configuration (Material)
 theme:
   name: material
-site_url: https://prateekrai-atlan.github.io/sanji/
+  language: en
+  custom_dir: overrides
+  font:
+    text: Roboto
+    code: Roboto Mono
+  favicon: logos/favicon.png
+  icon:
+    logo: logos/sanji-2
+  features:
+    - announce.dismiss
+    # - content.action.edit
+    # - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    # - content.code.select
+    # - content.footnote.tooltips
+    - content.tabs.link
+    - content.tooltips
+    # - header.autohide
+    # - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    # - navigation.instant
+    # - navigation.instant.prefetch
+    # - navigation.instant.progress
+    # - navigation.prune
+    - navigation.sections
+    - navigation.tabs
+    # - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - navigation.indexes
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+    # - toc.integrate
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/link
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off
+        name: Switch to system preference
+
+
+# Documentation Configuration
+docs_dir: docs
+
+# Nav Configuration
+nav:
+  - Home: index.md
+  - About: about.md
+
+# Extra Configuration
+extra:
+  social:
