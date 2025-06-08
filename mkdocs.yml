@@ -2,7 +2,9 @@
 site_name: Sanji
 site_url: https://prateekrai-atlan.github.io/sanji/
 site_author: Prateek Rai
-site_description: Sanji is a personal website for Prateek Rai. It is a collection of projects, blogs, personal notes/opinions, and other things.
+site_description: Sanji is a personal website for Prateek Rai. It is a collection of projects, blogs, personal notes/opinions, and rants.
+copyright: >-
+  Copyright &copy; 2025 Prateek Rai
 
 # Repository Information
 repo_name: sanji
@@ -16,9 +18,9 @@ theme:
   font:
     text: Roboto
     code: Roboto Mono
-  favicon: logos/favicon.png
+  favicon: logos/strawhat_favicon.png
   icon:
-    logo: logos/sanji-2
+    logo: logos/strawhat_logo
   features:
     - announce.dismiss
     # - content.action.edit
@@ -31,13 +33,13 @@ theme:
     - content.tooltips
     # - header.autohide
     # - navigation.expand
-    - navigation.footer
+    # - navigation.footer
     - navigation.indexes
     # - navigation.instant
     # - navigation.instant.prefetch
     # - navigation.instant.progress
     # - navigation.prune
-    - navigation.sections
+    # - navigation.sections
     - navigation.tabs
     # - navigation.tabs.sticky
     - navigation.top
@@ -51,23 +53,22 @@ theme:
   palette:
     - media: "(prefers-color-scheme)"
       toggle:
-        icon: material/link
+        icon: material/brightness-auto
         name: Switch to light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
       primary: teal
       accent: indigo
       toggle:
-        icon: material/toggle-switch
+        icon: material/weather-sunny
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: teal
       accent: indigo
       toggle:
-        icon: material/toggle-switch-off
+        icon: material/weather-night
         name: Switch to system preference
-
 
 # Documentation Configuration
 docs_dir: docs
@@ -75,8 +76,46 @@ docs_dir: docs
 # Nav Configuration
 nav:
   - Home: index.md
-  - About: about.md
+  - About: 
+      - About: about/index.md
+      - Education: 
+        - Education: about/education/index.md
+        - School: about/education/school.md
+  - Blog:
+    - blog/index.md
 
 # Extra Configuration
 extra:
+  # generator: false (https://squidfunk.github.io/mkdocs-material/setup/setting-up-the-footer/#generator-notice)
   social:
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/prateek-rai-48597b1ab/
+      name: Prateek on LinkedIn
+    - icon: fontawesome/brands/github
+      link: https://github.com/prateekrai-atlan
+      name: Prateek on GitHub
+    - icon: fontawesome/brands/youtube
+      link: https://www.youtube.com/@prateek11rai
+      name: Prateek on YouTube
+    - icon: fontawesome/brands/instagram
+      link: https://instagram.com/prateek11rai
+      name: Prateek on Instagram
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/prateek11rai
+      name: Prateek on X
+    - icon: fontawesome/brands/facebook
+      link: https://www.facebook.com/prateek11rai
+      name: Prateek on Facebook
+
+# Plugins
+plugins:
+  - meta:
+      enabled: true
+  - search:
+      enabled: true
+  - social:
+      enabled: true
+  - blog:
+      authors: true
+      draft_on_serve: true
+      draft: true
