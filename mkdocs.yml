@@ -2,13 +2,13 @@
 site_name: Sanji
 site_url: https://prateekrai-atlan.github.io/sanji/
 site_author: Prateek Rai
-site_description: Sanji is a personal website for Prateek Rai. It is a collection of projects, blogs, personal notes/opinions, and rants.
+site_description: Sanji is a personal website for Prateek Rai. It is a collection of blogs, personal opinions, and rants.
 copyright: >-
   Copyright &copy; 2025 Prateek Rai
 
 # Repository Information
 repo_name: sanji
-repo_url: https://github.com/prateekrai-atlan/sanji
+repo_url: https://github.com/prateek11rai/sanji
 
 # Theme Configuration (Material)
 theme:
@@ -16,11 +16,11 @@ theme:
   language: en
   custom_dir: overrides
   font:
-    text: Roboto
-    code: Roboto Mono
-  favicon: logos/strawhat_favicon.png
+    text: Google Sans Code
+    code: Google Sans Code
+  favicon: logos/strawhat.png
   icon:
-    logo: logos/strawhat_logo
+    logo: logos/strawhat
   features:
     - announce.dismiss
     # - content.action.edit
@@ -57,15 +57,15 @@ theme:
         name: Switch to light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: teal
-      accent: indigo
+      primary: black
+      accent: gray
       toggle:
         icon: material/weather-sunny
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: teal
-      accent: indigo
+      primary: black
+      accent: gray
       toggle:
         icon: material/weather-night
         name: Switch to system preference
@@ -75,37 +75,61 @@ docs_dir: docs
 
 # Nav Configuration
 nav:
-  - Home: index.md
-  - About: 
-      - About: about/index.md
-      - Education: 
-        - Education: about/education/index.md
-        - School: about/education/school.md
+  - Me: index.md
+  - Projects: 
+      - Projects: projects/index.md
+      - Doc Aid: 
+        - Doc Aid: projects/doc-aid/index.md
   - Blog:
     - blog/index.md
+
+# Attributes addition
+markdown_extensions: 
+  - attr_list
+  - md_in_html
+  - pymdownx.blocks.caption
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      options:
+        custom_icons:
+          - overrides/.icons
+  - footnotes
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
 
 # Extra Configuration
 extra:
   # generator: false (https://squidfunk.github.io/mkdocs-material/setup/setting-up-the-footer/#generator-notice)
   social:
     - icon: fontawesome/brands/linkedin
-      link: https://www.linkedin.com/in/prateek-rai-48597b1ab/
-      name: Prateek on LinkedIn
+      link: https://www.linkedin.com/in/prateek11rai/
+      name: LinkedIn
     - icon: fontawesome/brands/github
-      link: https://github.com/prateekrai-atlan
-      name: Prateek on GitHub
+      link: https://github.com/prateek11rai
+      name: GitHub
+    - icon: fontawesome/brands/goodreads-g
+      link: https://www.goodreads.com/user/show/186922946-prateek-rai
+      name: GoodReads
+    - icon: fontawesome/brands/strava
+      link: https://www.strava.com/athletes/prateek11rai
+      name: Strava
+    - icon: logos/myanimelist
+      link: https://myanimelist.net/animelist/prateek11rai
+      name: MyAnimeList
     - icon: fontawesome/brands/youtube
       link: https://www.youtube.com/@prateek11rai
-      name: Prateek on YouTube
+      name: YouTube
     - icon: fontawesome/brands/instagram
       link: https://instagram.com/prateek11rai
-      name: Prateek on Instagram
+      name: Instagram
     - icon: fontawesome/brands/x-twitter
       link: https://x.com/prateek11rai
-      name: Prateek on X
+      name: X
     - icon: fontawesome/brands/facebook
       link: https://www.facebook.com/prateek11rai
-      name: Prateek on Facebook
+      name: Facebook
 
 # Plugins
 plugins:
@@ -119,3 +143,4 @@ plugins:
       authors: true
       draft_on_serve: true
       draft: true
+      authors_profile: true
