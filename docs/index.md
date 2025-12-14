@@ -11,9 +11,11 @@ social:
 
 # Hi!
 
-I am Prateek. Part-time techie and full-time football/soccer fan. I created this site to document my projects and thoughts. I occasionally read too. Currently obsessed about anything [Yukio Mishima](https://en.wikipedia.org/wiki/Yukio_Mishima). [^1]
+I am Prateek. Part-time techie and full-time football/soccer fan. I created this site[^1] to document my projects[^2] and thoughts[^3]. I occasionally read too. Currently obsessed about anything [Yukio Mishima](https://en.wikipedia.org/wiki/Yukio_Mishima).
 
-[^1]: Why is the site called [Sanji](./blog/posts/sanji.md)?
+[^1]: Why call it [Sanji](./blog/posts/sanji.md)?
+[^2]: Visit [projects](./projects/index.md).
+[^3]: Visit [blog](./blog/index.md).
 
 <!-- <div class="grid cards" markdown>
 
