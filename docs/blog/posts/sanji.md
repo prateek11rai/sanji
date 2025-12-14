@@ -9,7 +9,7 @@ draft: false
 
 # Sanji
 
-This site is named after a popular character from the highest selling mange written by Eiichiro Oda called "One Piece". This piece of text is to exaplain why "Sanji" is the best character. [^1]
+This site is named after a popular character from the highest selling manga written by Eiichiro Oda called "One Piece". This piece of text is to explain why "Sanji" is the best character. [^1]
 
 [^1]: All images used here where picked from the web. Please [contact](mail:prateek11rai@protonmail.com) if you would like to get them taken down :pray:
 
