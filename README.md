@@ -6,6 +6,8 @@ The site has three sections:
 - Projects : Catalogue of projects
 - Blog : Rants
 
+Hosted on : https://prateek11rai.github.io/sanji/
+
 ## Setup
 
 Guide will contain Mac commands.
