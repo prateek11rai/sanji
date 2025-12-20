@@ -143,4 +143,11 @@ plugins:
       authors: true
       draft_on_serve: true
       draft: true
-      authors_profile: true
+      authors_profiles: true
+  -  rss:
+      enabled: true
+      match_path: blog/posts/.* 
+      date_from_meta:
+        as_creation: date
+      categories:
+        - categories
