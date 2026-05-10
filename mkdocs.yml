@@ -97,7 +97,11 @@ markdown_extensions:
   - footnotes
   - admonition
   - pymdownx.details
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
 # Extra Configuration
 extra:
@@ -143,7 +147,7 @@ plugins:
       authors: true
       draft_on_serve: true
       draft: true
-      authors_profiles: true
+
   -  rss:
       enabled: true
       match_path: blog/posts/.* 
