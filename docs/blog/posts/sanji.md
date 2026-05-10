@@ -17,7 +17,7 @@ This site is named after a popular character from the highest selling manga writ
 
 <!-- more -->
 
-# The Kindness That was Starved Into Him
+## The Kindness That was Starved Into Him
 
 Shonen anime is full of tragic backstories, but Sanji’s hits differently. His trauma isn’t framed around power or revenge. It’s hunger. The slow, humiliating kind that eats away at your body and your dignity.
 
@@ -27,7 +27,7 @@ Sanji's relationship with Zeff is of a dad that he never had. Zeff didn’t just
 
 That’s why Sanji feeds everyone. Gin, his enemies, strangers, his crew. His kindness isn’t softness—it’s memory. He knows exactly what it feels like to shrink day by day, to feel your body betray you. In a genre obsessed with brute strength, Sanji’s empathy feels almost radical.
 
-# The Failure of Germa, the Success of Sora
+## The Failure of Germa, the Success of Sora
 
 To really understand Sanji, you have to accept one thing: his existence is an act of rebellion.
 
@@ -39,7 +39,7 @@ But that “failure” was his mother’s victory.
 
 Sora (his mother) knowingly poisoned herself to stop the genetic modifications, sacrificing her life so at least one child could grow up human. Sanji’s emotions are not a coincidence, they’re something his mother died for. Every time Sanji chooses kindness, he is honoring Sora and rejecting Judge. Sanji didn’t just run away. He survived.
 
-# The Tragedy in the Rain
+## The Tragedy in the Rain
 
 If One Piece ever deserved to be called cinematic, it’s the window scene in Whole Cake Island.
 
@@ -53,7 +53,7 @@ Oda didn’t give us a dramatic outburst or a fight. He gave us Sanji standing i
 
 He folds inward. For a character who wears bravado like armor, that moment strips him bare.
 
-# The Hunter in the Shadows
+## The Hunter in the Shadows
 
 Luffy breaks walls. Zoro cuts through them. Sanji goes around them.
 
@@ -65,7 +65,7 @@ The Sea Train infiltration is one of his defining moments. Alone, outnumbered, n
 
 He saves the crew without applause, without recognition, and often without them even realizing they were in danger.
 
-# The Iron Code of Chivalry
+## The Iron Code of Chivalry
 
 Sanji’s refusal to hit women is often treated like a gag, but it’s actually one of the heaviest things he carries.
 
@@ -75,7 +75,7 @@ That rule comes from Zeff. To Sanji, it’s sacred. If he breaks it, he loses th
 
 But his growth shows in Wano. Against Black Maria, Sanji does something unexpected. He asks for help. He calls Robin. That moment isn’t weakness. It’s trust. Sanji finally understands that his code doesn’t have to be a death sentence. It makes him part of a crew.
 
-# The Aesthetic of Cool (Yes, the Cigarette)
+## The Aesthetic of Cool (Yes, the Cigarette)
 
 Let’s be honest, Sanji also just looks cool.
 
@@ -85,6 +85,6 @@ Smoking isn’t healthy, but in the visual language of film and anime, it repres
 
 Whether he’s thanking Enel for a light or calmly exhaling after a brutal fight, he carries a kind of stoic energy that feels completely out of place, and perfect for a pirate fantasy.
 
-# Thus... :material-cigar:
+## Thus... :material-cigar:
 
 He’s a fighter, a chef, a tactician, a romantic, and someone who has been broken more than once, yet he kept getting up. He represents balance: passion and responsibility, kindness and resolve, vulnerability and strength.

@@ -10,7 +10,12 @@ dependencies = [
     "mkdocs>=1.6.1,<2",
     "mkdocs-material[imaging]>=9.6.14,<10",
     "mkdocs-rss-plugin>=1.17.7",
+    "poethepoet>=0.34",
 ]
+
+[tool.poe.tasks]
+serve = { cmd = "uv run mkdocs serve", env = { DYLD_LIBRARY_PATH = "/opt/homebrew/lib" } }
+build = { cmd = "uv run mkdocs build", env = { DYLD_LIBRARY_PATH = "/opt/homebrew/lib" } }
 
 [build-system]
 requires = ["hatchling"]

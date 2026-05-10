@@ -1,75 +1,59 @@
 # Sanji
 
-A Personal blog site built using [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/).
-The site has three sections:
-- About Me : Personal Information
-- Projects : Catalogue of projects
-- Blog : Rants
+A personal blog built with [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/).
 
-Hosted on : https://prateek11rai.github.io/sanji/
+| Section | Contents |
+|---------|----------|
+| Me | Personal information |
+| Projects | Catalogue of projects |
+| Blog | Rants |
 
-## Setup
+**Hosted at:** <https://prateek11rai.github.io/sanji/>
 
-Guide will contain Mac commands.
+![Sanji](docs/assets/images/sanji/sanji-intro.jpg)
 
-### Install Python
+---
 
-Recommend using pyenv to control different python versions.
+## Quick Start
 
-#### Install xcode
+```bash
+git clone https://github.com/prateek11rai/sanji.git
+cd sanji
+brew install uv
+uv sync --all-groups --all-extras --upgrade
+uv run poe serve
+```
+
+Open <http://127.0.0.1:8000/sanji/>, then `^C` to stop.
+
+---
+
+## Prerequisites
+
+### Xcode Command Line Tools
 
 ```bash
 xcode-select --install
 ```
 
-#### Install and Setup Homebrew
-
-Download the installer
+### Homebrew
 
 ```bash
-curl -fsSL -o install.sh https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
-```
+curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
 
-Execute the installer
-
-```bash
-/bin/bash install.sh
-```
-
-Edit PATH
-
-```bash
-nano ~/.zshrc
-```
-
-```bash
-# Add Homebrew's executable directory to the front of the PATH
+# Add to ~/.zshrc:
 export PATH=/usr/local/bin:$PATH
-```
 
-```bash
 source ~/.zshrc
 ```
 
-Check that homebrew is installed
-
-```bash
-brew doctor
-```
-
-#### Install pyenv
-
-Install pyenv using brew
+### Python (via pyenv)
 
 ```bash
 brew install pyenv
 ```
 
-Edit Path
-
-```bash
-nano ~/.zshrc
-```
+Add to `~/.zshrc`:
 
 ```bash
 export PYENV_ROOT="$HOME/.pyenv"
@@ -79,44 +63,32 @@ eval "$(pyenv init -)"
 
 ```bash
 source ~/.zshrc
-```
-
-#### Install python 3.12.2
-
-```bash
 pyenv install 3.12.2
-```
-
-```bash
 pyenv global 3.12.2
 ```
 
-### Install Dependencies
+## Setup
 
-#### Install uv
+### System Dependencies
+
+Social card generation requires the `cairo` graphics library:
+
+```bash
+brew install cairo
+```
+
+### Python Dependencies
 
 ```bash
 brew install uv
+uv sync --all-groups --all-extras --upgrade
 ```
 
-#### Sync libraries
+## Development
 
-Enter the root of the directory and install all libraries
+| Command | What it does |
+|---------|-------------|
+| `uv run poe serve` | Start dev server with live reload |
+| `uv run poe build` | Build static site to `site/` |
 
-```bash
-uv sync
-```
-
-### Test
-
-#### Run the Server
-
-```bash
-uv run mkdocs serve
-```
-
-#### Stop the Server
-
-```bash
-^ + C
-```
+Stop the server with `^C`.
