@@ -185,11 +185,6 @@ graph TB
     S === TV
     S === W
     
-    style S fill:#2d5a27,color:#fff
-    style M fill:#1a237e,color:#fff
-    style P fill:#333,color:#fff
-    style TV fill:#4a148c,color:#fff
-    style W fill:#e65100,color:#fff
 ```
 
 ```bash
@@ -338,8 +333,6 @@ graph LR
     C --> MS
     C --> CX
     
-    style C fill:#1565c0,color:#fff
-    style W fill:#00695c,color:#fff
 ```
 
 Once installed, search for manga, add to your library, and enable **auto-download** for new chapters. The server becomes largely autonomous — new chapters are downloaded in the background, and your library updates on a schedule.
@@ -396,8 +389,6 @@ graph LR
     TS -.-> JF
     TS -.-> SW
     
-    style J2 fill:#bf360c,color:#fff
-    style S2 fill:#1565c0,color:#fff
 ```
 
 - **Jellyfin**: Install the Jellyfin Mobile app from the App Store, sign in with `http://ohara:8096` (the Tailscale MagicDNS hostname resolves over the mesh)
@@ -504,13 +495,6 @@ graph TB
     TV -. "Jellyfin for TV" .-> JF
     WL -. "rsync" .-> S
     
-    style S fill:#2d5a27,color:#fff
-    style JF fill:#bf360c,color:#fff
-    style SW fill:#1565c0,color:#fff
-    style MB fill:#1a237e,color:#fff
-    style IP fill:#333,color:#fff
-    style TV fill:#4a148c,color:#fff
-    style WL fill:#e65100,color:#fff
 ```
 
 ## Backup Strategy
