@@ -105,6 +105,29 @@ markdown_extensions:
 
 # Extra Configuration
 extra:
+  consent:
+    title: Cookie Consent
+    description: >-
+      This site uses Google Analytics to understand how it's used.
+      No personal data is collected. You can accept or decline below.
+    cookies:
+      analytics: Google Analytics
+  analytics:
+    provider: google
+    property: __GA4_PLACEHOLDER__
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/emoticon-happy-outline
+          name: This page was helpful
+          data: 1
+          note: >-
+            Thanks for your feedback!
+        - icon: material/emoticon-sad-outline
+          name: This page could be improved
+          data: 0
+          note: >-
+            Thanks for your feedback!
   # generator: false (https://squidfunk.github.io/mkdocs-material/setup/setting-up-the-footer/#generator-notice)
   social:
     - icon: fontawesome/brands/linkedin

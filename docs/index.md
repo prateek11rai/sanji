@@ -1,6 +1,8 @@
 ---
 # template: home.html FIXME: Have a better page layout, if time allows ?
 title: Sanji
+hide:
+  - feedback
 social:
   cards_layout_options:
     title: Sanji by Prateek Rai
