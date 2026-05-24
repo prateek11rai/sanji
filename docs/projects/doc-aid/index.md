@@ -1,3 +1,8 @@
+---
+hide:
+  - feedback
+---
+
 # Doc Aid
 
 !!! note "Coming Soon"

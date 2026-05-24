@@ -1,3 +1,8 @@
+---
+hide:
+  - feedback
+---
+
 # Projects
 
 <div class="grid cards" markdown>
