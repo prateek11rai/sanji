@@ -1,0 +1,139 @@
+/* Dracula Theme v1.0 — https://draculatheme.com
+   Color palette adapted for MkDocs Material by Prateek Rai.
+   Inspired by the Dracula Theme (draculatheme.com). */
+
+/* ── Dark Scheme ─────────────────────────────────────────── */
+
+[data-md-color-scheme="dracula-dark"] {
+  /* Primary = neutral dark header (not purple) */
+  --md-primary-fg-color: #21222c;
+  --md-primary-fg-color--light: #282a36;
+  --md-primary-fg-color--dark: #1d1e2b;
+  --md-primary-bg-color: #f8f8f2;
+  --md-primary-bg-color--light: #f8f8f280;
+
+  /* Accent = pink — used for hover, active, focus states */
+  --md-accent-fg-color: #ff79c6;
+  --md-accent-fg-color--transparent: #ff79c61a;
+  --md-accent-bg-color: #f8f8f2;
+  --md-accent-bg-color--light: #f8f8f280;
+
+  --md-default-fg-color: #f8f8f2;
+  --md-default-fg-color--light: #f8f8f2cc;
+  --md-default-fg-color--lighter: #f8f8f266;
+  --md-default-fg-color--lightest: #f8f8f21a;
+  --md-default-bg-color: #282a36;
+  --md-default-bg-color--light: #3a3c4a;
+  --md-default-bg-color--lighter: #44475a;
+  --md-default-bg-color--lightest: #44475a33;
+
+  --md-typeset-color: #f8f8f2;
+  --md-typeset-a-color: #8be9fd;
+  --md-typeset-mark-color: #f1fa8c80;
+
+  --md-code-fg-color: #f8f8f2;
+  --md-code-bg-color: #1d1e2b;
+  --md-code-hl-color: #44475a66;
+  --md-code-hl-number-color: #bd93f9;
+  --md-code-hl-special-color: #ff79c6;
+  --md-code-hl-function-color: #50fa7b;
+  --md-code-hl-constant-color: #ffb86c;
+  --md-code-hl-keyword-color: #ff79c6;
+  --md-code-hl-string-color: #f1fa8c;
+  --md-code-hl-name-color: #f8f8f2;
+  --md-code-hl-operator-color: #ff79c6;
+  --md-code-hl-punctuation-color: #f8f8f2;
+  --md-code-hl-comment-color: #6272a4;
+  --md-code-hl-generic-color: #f8f8f2;
+  --md-code-hl-variable-color: #f8f8f2;
+
+  --md-admonition-fg-color: #f8f8f2;
+  --md-admonition-bg-color: #282a36;
+
+  --md-footer-fg-color: #f8f8f2;
+  --md-footer-fg-color--light: #f8f8f280;
+  --md-footer-bg-color: #1d1e2b;
+  --md-footer-bg-color--dark: #21222c;
+
+  --md-typeset-table-color: #44475a;
+  --md-typeset-table-color--light: #44475a40;
+}
+
+/* ── Light Scheme ────────────────────────────────────────── */
+
+[data-md-color-scheme="dracula-light"] {
+  /* Primary = dark header on light page (GitHub-style) */
+  --md-primary-fg-color: #282a36;
+  --md-primary-fg-color--light: #3a3c4a;
+  --md-primary-fg-color--dark: #1d1e2b;
+  --md-primary-bg-color: #f8f8f2;
+  --md-primary-bg-color--light: #f8f8f280;
+
+  --md-accent-fg-color: #c0448b;
+  --md-accent-fg-color--transparent: #c0448b1a;
+  --md-accent-bg-color: #ffffff;
+  --md-accent-bg-color--light: #ffffff80;
+
+  --md-default-fg-color: #282a36;
+  --md-default-fg-color--light: #282a36cc;
+  --md-default-fg-color--lighter: #282a3666;
+  --md-default-fg-color--lightest: #282a361a;
+  --md-default-bg-color: #f8f8f2;
+  --md-default-bg-color--light: #ffffff;
+  --md-default-bg-color--lighter: #eae9e1;
+  --md-default-bg-color--lightest: #eae9e133;
+
+  --md-typeset-color: #282a36;
+  --md-typeset-a-color: #00b3cc;
+  --md-typeset-mark-color: #f1fa8c80;
+
+  --md-code-fg-color: #282a36;
+  --md-code-bg-color: #eae9e1;
+  --md-code-hl-color: #eae9e166;
+  --md-code-hl-number-color: #9266c2;
+  --md-code-hl-special-color: #c0448b;
+  --md-code-hl-function-color: #469b46;
+  --md-code-hl-constant-color: #b36200;
+  --md-code-hl-keyword-color: #c0448b;
+  --md-code-hl-string-color: #b8860b;
+  --md-code-hl-name-color: #282a36;
+  --md-code-hl-operator-color: #c0448b;
+  --md-code-hl-punctuation-color: #282a36;
+  --md-code-hl-comment-color: #7e8a9c;
+  --md-code-hl-generic-color: #282a36;
+  --md-code-hl-variable-color: #282a36;
+
+  --md-admonition-fg-color: #282a36;
+  --md-admonition-bg-color: #f8f8f2;
+
+  --md-footer-fg-color: #f8f8f2;
+  --md-footer-fg-color--light: #f8f8f280;
+  --md-footer-bg-color: #282a36;
+  --md-footer-bg-color--dark: #1d1e2b;
+
+  --md-typeset-table-color: #eae9e1;
+  --md-typeset-table-color--light: #eae9e140;
+}
+
+/* ── Tab Navigation (both schemes) ──────────────────────── */
+
+.md-tabs__link {
+  color: var(--md-primary-bg-color);
+  opacity: 0.7;
+}
+
+.md-tabs__link:hover {
+  color: var(--md-accent-fg-color);
+  opacity: 1;
+}
+
+.md-tabs__link--active {
+  color: var(--md-accent-fg-color);
+  opacity: 1;
+}
+
+/* Active tab underline indicator */
+.md-tabs__item--active .md-tabs__link {
+  color: var(--md-accent-fg-color);
+  border-bottom: 2px solid var(--md-accent-fg-color);
+}
