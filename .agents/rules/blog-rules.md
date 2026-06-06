@@ -36,7 +36,7 @@ draft: false
 ## Post Structure (Body)
 
 1. `# Title` — H1, descriptive but not clickbait (no colons if avoidable)
-2. Intro paragraph(s) — set the scene, hook the reader
+2. **Intro text** — 1-3 very short paragraphs, 2-4 sentences total. Hook the reader fast. State the problem or the promise. No rambling, no scene-setting essays.
 3. `![alt text](path){ loading=lazy }` — an image right before the break
 4. `<!-- more -->` — the excerpt cut
 5. Sections with `## Subheading` (H2 only, never H3)
