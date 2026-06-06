@@ -137,9 +137,11 @@ The blog-writing agent reads this before drafting. Handoff docs keep project wor
 
 ## Code Blocks
 
-- Language tag required on every fenced code block
-- Prefer `bash` for shell commands, `yaml` for compose files, `powershell` for Windows
-- Code blocks must be directly useful — copy-paste should work
+- **Language tag REQUIRED on every fenced code block** — never leave `` ``` `` bare. Use ` ```bash `, ` ```yaml `, ` ```text `, etc.
+- Use `text` for non-code content: directory trees (`/srv/...`), UI navigation paths (`Settings → ...`), file listings, URLs — anything that's not executable
+- Prefer `bash` for shell commands, `yaml` for compose files, `powershell` for Windows, `ini` or `env` for config files
+- **Every block must have a language tag** — no exceptions. A bare `` ``` `` opening fence means no syntax highlighting.
+- Code blocks must be copy-paste ready — commands should work as written
 - Include comments (`# ...`) for brevity but keep commands runnable
 - For multi-service Docker Compose, show the service block, not the full file
 - For config file excerpts, show only the relevant section with a comment showing the file path

@@ -151,7 +151,7 @@ sudo systemctl restart systemd-logind
 
 All data lives under `/srv`, following the Linux Filesystem Hierarchy Standard:
 
-```
+```text
 /srv/
 ├── media/
 │   ├── movies/
@@ -298,7 +298,7 @@ To add sources to Suwayomi:
 1. Log in with the credentials you set in `docker-compose.yml`
 2. Go to **Extensions** → **Repositories**
 3. Add the Keiyoushi extensions repository URL:
-   ```
+   ```text
    https://keiyoushi.github.io/extensions/index.json
    ```
 4. Click **Save** — the repository is now registered

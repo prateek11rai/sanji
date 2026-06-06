@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
+
 # Site Information
 site_name: Sanji
 site_url: https://prateekrai-atlan.github.io/sanji/
@@ -16,8 +18,8 @@ theme:
   language: en
   custom_dir: overrides
   font:
-    text: Google Sans Code
-    code: Google Sans Code
+    text: JetBrains Mono
+    code: JetBrains Mono
   favicon: logos/strawhat.png
   icon:
     logo: logos/strawhat
@@ -44,7 +46,6 @@ theme:
     # - navigation.tabs.sticky
     - navigation.top
     - navigation.tracking
-    - navigation.indexes
     - search.highlight
     - search.share
     - search.suggest
@@ -52,20 +53,17 @@ theme:
     # - toc.integrate
   palette:
     - media: "(prefers-color-scheme)"
+      scheme: dracula-dark
       toggle:
         icon: material/brightness-auto
         name: Switch to light mode
     - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: black
-      accent: gray
+      scheme: dracula-light
       toggle:
         icon: material/weather-sunny
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: black
-      accent: gray
+      scheme: dracula-dark
       toggle:
         icon: material/weather-night
         name: Switch to system preference
@@ -102,6 +100,10 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+
+# Extra CSS
+extra_css:
+  - extra/css/dracula.css
 
 # Extra Configuration
 extra:

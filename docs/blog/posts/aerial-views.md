@@ -63,7 +63,7 @@ graph LR
 
 ### 1. Enable Developer Options on the TV
 
-```
+```text
 Settings → Device Preferences → About → Build → click 7 times
 Settings → System → Developer options → USB debugging → ON
 ```
@@ -160,7 +160,7 @@ Google TV is 16:9 4K, so aim for **3840×2160** content:
 
 My TV now cycles through a mix of 4K Wallhaven images and a video loop from MoeWalls — about 151 MB of local content that plays regardless of internet connectivity.
 
-```
+```text
 /sdcard/AerialViews/
 ├── wallhaven-je86dy_3840x2160.png
 ├── wallhaven-d86o9g_3840x2160.png

@@ -41,7 +41,7 @@ The server's 15-year-old hardware does not matter here. Hermes does not run a mo
 
 Hermes ships as an official Docker image, so it fits right into Ohara's existing infrastructure. I keep all app data under `/srv/appdata`, so Hermes lives at `/srv/appdata/hermes/`:
 
-```
+```text
 /srv/appdata/hermes/
 ├── docker-compose.yml
 ├── .env
@@ -73,7 +73,7 @@ services:
 
 The `.env` file beside the compose file holds just the OpenRouter key:
 
-```
+```bash
 OPENROUTER_API_KEY=sk-or-...
 ```
 
