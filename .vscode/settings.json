@@ -10,5 +10,10 @@
         "Wano",
         "zeff",
         "Zoro"
+    ],
+    "yaml.customTags": [
+        "!!python/name:material.extensions.emoji.twemoji",
+        "!!python/name:material.extensions.emoji.to_svg",
+        "!!python/name:pymdownx.superfences.fence_code_format"
     ]
 }
