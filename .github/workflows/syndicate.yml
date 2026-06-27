@@ -1,0 +1,59 @@
+name: Syndicate blog to dev.to
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  syndicate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Sync dependencies
+        run: uv sync --frozen
+
+      - name: Detect changed blog posts
+        id: changed
+        run: |
+          BEFORE="${{ github.event.before }}"
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            FILES=$(git diff-tree --no-commit-id -r "${{ github.sha }}" --name-only -- 'docs/blog/posts/*.md')
+          else
+            FILES=$(git diff --name-only "$BEFORE" "${{ github.sha }}" -- 'docs/blog/posts/*.md')
+          fi
+          FILES=$(echo "$FILES" | grep -v 'sanji\.md$' || true)
+          {
+            echo "changed<<DELIM"
+            echo "$FILES"
+            echo "DELIM"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Syndicate to dev.to
+        if: steps.changed.outputs.changed != ''
+        run: |
+          echo "$CHANGED_FILES" | while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            echo "→ Syndicating $file"
+            uv run python scripts/syndicate.py "$file" --publish
+          done
+        env:
+          CHANGED_FILES: ${{ steps.changed.outputs.changed }}
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+
+      - name: No blog changes
+        if: steps.changed.outputs.changed == ''
+        run: echo "No blog posts changed — skipped"
