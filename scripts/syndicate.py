@@ -258,7 +258,7 @@ def build_payload(post_file: Path, slug: str | None = None, publish: bool = Fals
     raw_image = extract_first_image(body)
     slug = slug or make_slug(title)
 
-    tags = [t.lower() for t in fm.get("categories", [])][:MAX_TAGS]
+    tags = [t.lower().replace("-", "") for t in fm.get("categories", [])][:MAX_TAGS]
     if not tags:
         tags = ["meta"]
 
@@ -289,7 +289,7 @@ def build_payload(post_file: Path, slug: str | None = None, publish: bool = Fals
             "published": should_publish,
             "canonical_url": canonical_url,
             "description": description or "",
-            "tags": ", ".join(tags),
+            "tags": tags,
             "main_image": main_image_url,
         }
     }
