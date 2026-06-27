@@ -11,6 +11,8 @@ dependencies = [
     "mkdocs-material[imaging]>=9.6.14,<10",
     "mkdocs-rss-plugin>=1.17.7",
     "poethepoet>=0.34",
+    "python-dotenv>=1.1,<2",
+    "requests>=2.32,<3",
 ]
 
 [tool.poe.tasks]
