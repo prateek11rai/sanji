@@ -4,6 +4,11 @@ authors:
 categories:
   - Android
   - Homelab
+tags:
+  - android
+  - homelab
+  - screensaver
+  - google
 date: 2026-05-17
 draft: false
 ---

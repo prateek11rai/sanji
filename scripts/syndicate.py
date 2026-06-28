@@ -60,6 +60,10 @@ def parse_front_matter(content: str) -> tuple[dict, str]:
     if cats:
         fm["categories"] = re.findall(r"\s+- (.+)", cats.group(1))
 
+    tags = re.search(r"^tags:\s*\n((?:\s+- .+\n?)+)", raw, re.MULTILINE)
+    if tags:
+        fm["tags"] = re.findall(r"\s+- (.+)", tags.group(1))
+
     dt = re.search(r"^date:\s*(.+)", raw, re.MULTILINE)
     if dt:
         fm["date"] = dt.group(1).strip()
@@ -258,7 +262,7 @@ def build_payload(post_file: Path, slug: str | None = None, publish: bool = Fals
     raw_image = extract_first_image(body)
     slug = slug or make_slug(title)
 
-    tags = [t.lower().replace("-", "") for t in fm.get("categories", [])][:MAX_TAGS]
+    tags = [t.lower().replace("-", "") for t in fm.get("tags") or fm.get("categories", [])][:MAX_TAGS]
     if not tags:
         tags = ["meta"]
 
