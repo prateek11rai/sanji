@@ -21,7 +21,7 @@ I wanted my own screensaver. 4K anime art from Wallhaven, video loops from MoeWa
 
 [^1]: Image credits and attribution — please [contact](mailto:prateek11rai@protonmail.com) if anything needs updating.
 
-![Aerial Views screensaver on Google TV](../../assets/images/aerial-views/aerial-views-intro.jpg){ loading=lazy }
+![Aerial Views screensaver on Google TV](../../assets/images/blog/aerial-views/aerial-views-intro.jpg){ loading=lazy }
 
 <!-- more -->
 

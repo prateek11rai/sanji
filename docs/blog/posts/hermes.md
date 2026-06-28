@@ -19,7 +19,7 @@ Ohara had been running quietly under my desk for weeks. Jellyfin streamed movies
 
 But I wanted more. I wanted it to talk back.
 
-![Hermes AI Agent interface](../../assets/images/hermes/hermes-intro.jpg){ loading=lazy }
+![Hermes AI Agent interface](../../assets/images/blog/hermes/hermes-intro.jpg){ loading=lazy }
 
 <!-- more -->
 
@@ -151,7 +151,7 @@ Here is where the free tier fantasy meets reality. A brand-new OpenRouter key ge
 
 You know you have hit the limit when Hermes stops responding and OpenRouter returns a `429` or a vague gateway error:
 
-![Rate limit error on OpenRouter](../../assets/images/hermes/hermes-rate-limit.jpg){ loading=lazy }
+![Rate limit error on OpenRouter](../../assets/images/blog/hermes/hermes-rate-limit.jpg){ loading=lazy }
 
 The fix is unsurprising:
 
@@ -192,7 +192,7 @@ docker restart hermes
 
 Open Telegram, find your bot by username, send a message. The agent responds. That is the whole setup — four commands and you have an AI assistant on your phone.
 
-![Telegram conversation with Hermes bot](../../assets/images/hermes/hermes-telegram.jpg){ loading=lazy }
+![Telegram conversation with Hermes bot](../../assets/images/blog/hermes/hermes-telegram.jpg){ loading=lazy }
 
 ## The WhatsApp Detour
 
@@ -212,7 +212,7 @@ rm -rf /opt/data/platforms/whatsapp
 docker restart hermes
 ```
 
-![WhatsApp self-chat with Hermes bot](../../assets/images/hermes/hermes-whatsapp.jpg){ loading=lazy }
+![WhatsApp self-chat with Hermes bot](../../assets/images/blog/hermes/hermes-whatsapp.jpg){ loading=lazy }
 
 Telegram is the first-class messaging platform for Hermes. WhatsApp works but has rough edges I did not want to maintain.
 
@@ -323,7 +323,7 @@ But that is a post for another day.
 4. **Tailscale's DNS can interfere with non-tailnet domains** — `.github.io`, and potentially other TLDs, may fail to resolve through Tailscale's MagicDNS. Know how to bypass it.
 5. **Telegram is the better platform** — WhatsApp integration exists but Telegram's bot API is cleaner, more reliable, and better documented. Start with Telegram.
 
-![Dr. Vegapunk — the mind behind the future](../../assets/images/hermes/hermes-end.jpg){ loading=lazy }
+![Dr. Vegapunk — the mind behind the future](../../assets/images/blog/hermes/hermes-end.jpg){ loading=lazy }
 
 The server under my desk still runs Jellyfin and Suwayomi. But now it also talks back. When I send a message to `@ohara_hermes_bot`, a container on that dusty old OptiPlex wakes up, calls a free NVIDIA-hosted model through OpenRouter, thinks about what I asked, and replies. No cloud subscription. No exposed ports. No GPU required.
 

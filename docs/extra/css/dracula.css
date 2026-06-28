@@ -137,3 +137,40 @@
   color: var(--md-accent-fg-color);
   border-bottom: 2px solid var(--md-accent-fg-color);
 }
+
+/* ── Report Pill ──────────────────────────────────────────── */
+
+/* Tighten title-to-pills, widen pills-to-content gap */
+.md-typeset h1 {
+  margin-bottom: 0.3em;
+}
+
+.md-typeset h1 + p {
+  margin-bottom: 1.5em;
+}
+
+.md-typeset .report-pill {
+  display: inline-block;
+  font-size: 0.65em;
+  font-weight: 600;
+  vertical-align: middle;
+  padding: 0.1em 0.55em;
+  border-radius: 999px;
+  text-decoration: none;
+  border: 1.5px solid var(--md-accent-fg-color);
+  color: var(--md-accent-fg-color) !important;
+  background: transparent;
+  transition: all 0.2s ease;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+.md-typeset .report-pill + .report-pill {
+  margin-left: 0.3em;
+}
+
+.md-typeset .report-pill:hover {
+  background: var(--md-accent-fg-color);
+  color: #ffffff !important;
+  border-color: var(--md-accent-fg-color);
+}

@@ -16,8 +16,8 @@ This directory contains conventions and tooling for maintaining consistent blog 
 
 - **Never use real-looking tokens or secrets in examples** — always `YOUR_BOT_TOKEN`, `YOUR_API_KEY`, etc.
 - Always run `uv run poe build` before committing a new post
-- Place images in `docs/assets/images/<slug>/` before referencing them
-- Image paths are relative: `../../assets/images/<slug>/file.jpg`
+- Place images in `docs/assets/images/<blog|projects>/<slug>/` before referencing them
+- Image paths are relative: `../../assets/images/<blog|projects>/<slug>/file.jpg`
 - Author is always `prateek11rai` (configured in `docs/blog/.authors.yml`)
 - Every post needs One Piece intro image + closing image + one thematic reference (minimum)
 - Handoff docs decouple project work from blog writing — use `.agents/handoffs/<slug>.md`

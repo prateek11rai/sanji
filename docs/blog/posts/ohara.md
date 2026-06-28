@@ -18,7 +18,7 @@ I had an old PC lying around — one of those machines you keep meaning to throw
 
 Then it hit me: I could turn it into a server.
 
-![Old PC repurposed as a server](../../assets/images/ohara/ohara-intro.jpg){ loading=lazy }
+![Old PC repurposed as a server](../../assets/images/blog/ohara/ohara-intro.jpg){ loading=lazy }
 
 <!-- more -->
 
@@ -535,7 +535,7 @@ The only time I SSH into the server is when I add a new service or update a cont
 
 In *One Piece*, Ohara was the island of scholars — a place where knowledge was pursued, preserved, and archived. The World Government destroyed it for holding too much knowledge, but the legacy survived through the survivors who carried books in their memory.
 
-![Why Ohara](../../assets/images/ohara/ohara-end.jpg){ loading=lazy }
+![Why Ohara](../../assets/images/blog/ohara/ohara-end.jpg){ loading=lazy }
 
 A home server is a much smaller act of preservation. But it is the same impulse: keep your own things on your own hardware, under your own control. Your media library, your manga collection, your files — they should outlive any streaming service's licensing decisions or any cloud provider's terms of service changes.
 

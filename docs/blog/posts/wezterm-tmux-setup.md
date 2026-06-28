@@ -18,7 +18,7 @@ I used the default macOS Terminal for years and thought that was just how termin
 
 Then I saw someone else's — proper font, syntax highlighting, a prompt that actually tells you something — and realized mine looked like a hospital monitor from the 90s.
 
-![Young Sanji cooking at the Baratie — learning the craft early](../../assets/images/wezterm-tmux-setup/wezterm-intro.png){ loading=lazy }
+![Young Sanji cooking at the Baratie — learning the craft early](../../assets/images/blog/wezterm-tmux-setup/wezterm-intro.png){ loading=lazy }
 
 <!-- more -->
 
@@ -280,7 +280,7 @@ graph TB
 
 ## What It Looks Like
 
-![Franky building the staircase — creating something that takes you higher](../../assets/images/wezterm-tmux-setup/wezterm-end.png){ loading=lazy }
+![Franky building the staircase — creating something that takes you higher](../../assets/images/blog/wezterm-tmux-setup/wezterm-end.png){ loading=lazy }
 
 WezTerm opens, attaches to the last Tmux session, and I see my Zsh prompt with the Dracula theme, Starship showing git status, and Neofetch greeting me with system info. Everything is the same as I left it — even if I closed the terminal an hour ago, on a different display, in a different city.
 

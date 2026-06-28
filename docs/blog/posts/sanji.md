@@ -13,7 +13,7 @@ This site is named after a popular character from the highest selling manga writ
 
 [^1]: All images used here, were picked from the web. Please [contact](mail:prateek11rai@protonmail.com),if you would like to get them taken down :pray:
 
-![Sanji](../../assets/images/sanji/sanji-intro.jpg){ loading=lazy }
+![Sanji](../../assets/images/blog/sanji/sanji-intro.jpg){ loading=lazy }
 
 <!-- more -->
 
@@ -21,7 +21,7 @@ This site is named after a popular character from the highest selling manga writ
 
 Shonen anime is full of tragic backstories, but Sanji’s hits differently. His trauma isn’t framed around power or revenge. It’s hunger. The slow, humiliating kind that eats away at your body and your dignity.
 
-![Sanji thanks zeff](../../assets/images/sanji/sanji-thanks-zeff.jpg){ loading=lazy }
+![Sanji thanks zeff](../../assets/images/blog/sanji/sanji-thanks-zeff.jpg){ loading=lazy }
 
 Sanji's relationship with Zeff is of a dad that he never had. Zeff didn’t just teach Sanji how to fight or cook—he taught him what food means. On that barren rock, when Zeff chose to give up his own leg and every scrap of food so a kid could live, he etched something permanent into Sanji’s soul.
 
@@ -31,7 +31,7 @@ That’s why Sanji feeds everyone. Gin, his enemies, strangers, his crew. His ki
 
 To really understand Sanji, you have to accept one thing: his existence is an act of rebellion.
 
-![Sanji mother](../../assets/images/sanji/sanji-mother.jpg){ loading=lazy }
+![Sanji mother](../../assets/images/blog/sanji/sanji-mother.jpg){ loading=lazy }
 
 Sanji was born into Germa 66, a family that valued strength stripped of emotion. Judge (his father) wanted weapons, not sons. When Sanji showed kindness, fear, and compassion, he was considered defective. Locked in a dungeon, beaten by his brothers, erased from the family name.
 
@@ -43,7 +43,7 @@ Sora (his mother) knowingly poisoned herself to stop the genetic modifications, 
 
 If One Piece ever deserved to be called cinematic, it’s the window scene in Whole Cake Island.
 
-![Sanji window scene](../../assets/images/sanji/sanji-window-scene.jpg){ loading=lazy }
+![Sanji window scene](../../assets/images/blog/sanji/sanji-window-scene.jpg){ loading=lazy }
 
 Sanji had already decided to destroy himself quietly for the sake of his crew. The arranged marriage was a political arrangement, but he convinced himself Pudding (his fiance´e) was not like others.
 
@@ -57,7 +57,7 @@ He folds inward. For a character who wears bravado like armor, that moment strip
 
 Luffy breaks walls. Zoro cuts through them. Sanji goes around them.
 
-![Sanji bingo](../../assets/images/sanji/sanji-bingo.jpg){ loading=lazy }
+![Sanji bingo](../../assets/images/blog/sanji/sanji-bingo.jpg){ loading=lazy }
 
 Sanji has always been the crew’s quiet strategist, the one acting when everyone else is reacting. In Alabasta, he became “Mr. Prince” and played Crocodile from the shadows. In Water 7, while emotions were tearing the crew apart, Sanji was already thinking three steps ahead.
 
@@ -69,7 +69,7 @@ He saves the crew without applause, without recognition, and often without them 
 
 Sanji’s refusal to hit women is often treated like a gag, but it’s actually one of the heaviest things he carries.
 
-![Sanji hit women](../../assets/images/sanji/sanji-hit-women.png){ loading=lazy }
+![Sanji hit women](../../assets/images/blog/sanji/sanji-hit-women.png){ loading=lazy }
 
 That rule comes from Zeff. To Sanji, it’s sacred. If he breaks it, he loses the man who gave him life twice over. That’s why he endures beatings rather than compromise.
 
@@ -79,7 +79,7 @@ But his growth shows in Wano. Against Black Maria, Sanji does something unexpect
 
 Let’s be honest, Sanji also just looks cool.
 
-![Sanji light](../../assets/images/sanji/sanji-light.jpg){ loading=lazy }
+![Sanji light](../../assets/images/blog/sanji/sanji-light.jpg){ loading=lazy }
 
 Smoking isn’t healthy, but in the visual language of film and anime, it represents composure under pressure. Sanji’s cigarette is less about rebellion and more about control.
 

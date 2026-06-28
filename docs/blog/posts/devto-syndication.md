@@ -20,7 +20,7 @@ Then I started copy-pasting the same content to dev.to manually — fixing broke
 
 The third time I did it, I wrote a Python script instead. That script became a CI pipeline. That pipeline became the subject of this post.[^1]
 
-![The Going Merry — the sending-ship that carried the Straw Hats from their private dock to the public ports of the world, over and over again](../../assets/images/devto-syndication/devto-intro.png)
+![The Going Merry — the sending-ship that carried the Straw Hats from their private dock to the public ports of the world, over and over again](../../assets/images/blog/devto-syndication/devto-intro.png)
 
 <!-- more -->
 
@@ -65,7 +65,7 @@ The entire payload nests under a single `article` key:
     "canonical_url": "https://prateek11rai.github.io/sanji/blog/2026/06/28/devto-syndication/",
     "description": "Short excerpt shown in previews",
     "tags": ["tooling", "python", "meta"],
-    "main_image": "https://raw.githubusercontent.com/prateek11rai/sanji/main/docs/assets/images/devto-syndication/devto-intro.png"
+    "main_image": "https://raw.githubusercontent.com/prateek11rai/sanji/main/docs/assets/images/blog/devto-syndication/devto-intro.png"
   }
 }
 ```
@@ -311,6 +311,6 @@ The Going Merry was not the biggest or strongest ship. It was a caravel — an o
 
 This syndication pipeline is the same thing. A small, purpose-built tool that carries each post from my personal dock to the public port. The canonical URL is the flag in the mast — everyone knows where it came from.
 
-![Transponder Snail — the Den Den Mushi that broadcasts signals across islands, always keeping the original message intact](../../assets/images/devto-syndication/devto-end.png)
+![Transponder Snail — the Den Den Mushi that broadcasts signals across islands, always keeping the original message intact](../../assets/images/blog/devto-syndication/devto-end.png)
 
 [^1]: Image credit and attribution — One Piece artwork is the property of Eiichiro Oda and Shueisha. Please [contact](mailto:prateek11rai@protonmail.com) if anything needs updating.
