@@ -40,7 +40,10 @@ draft: false
 3. `![alt text](path){ loading=lazy }` — an image right before the break
 4. `<!-- more -->` — the excerpt cut
 5. Sections with `## Subheading` (H2 only, never H3)
-6. A closing section that summarizes or reflects
+6. **Closing section** — summarizes or reflects. If the post uses a thematic/OP metaphor in the closing, separate it from the technical body with a `---` horizontal rule:
+   - Technical closing thought (the takeaway)
+   - `---`
+   - Thematic closing (OP metaphor, image, footnote)
 
 ## Image Rules
 
