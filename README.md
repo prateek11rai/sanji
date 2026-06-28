@@ -10,7 +10,7 @@ A personal blog built with [Material for MkDocs](https://squidfunk.github.io/mkd
 
 **Hosted at:** <https://prateek11rai.github.io/sanji/>
 
-![Sanji](docs/assets/images/sanji/sanji-intro.jpg)
+![Sanji](docs/assets/images/blog/sanji/sanji-intro.jpg)
 
 ---
 

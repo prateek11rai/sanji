@@ -83,7 +83,7 @@ Place these in admonitions (`!!! tip "Trivia"` or `!!! quote "Hot Take"`) or wea
 
 ### Step 6: Source Images
 
-- OP intro image: look in `docs/assets/images/` for reuse, else find from web (save to `docs/assets/images/<slug>/`)
+- OP intro image: look in `docs/assets/images/blog/` for reuse, else find from web (save to `docs/assets/images/blog/<slug>/`)
 - Closing image: OP character that matches the post's theme
 - Screenshots: provided by user or handoff doc
 - All images get `{ loading=lazy }` and descriptive alt text
@@ -91,7 +91,7 @@ Place these in admonitions (`!!! tip "Trivia"` or `!!! quote "Hot Take"`) or wea
 ### Step 7: Create Files
 
 ```bash
-mkdir -p docs/assets/images/<slug>/
+mkdir -p docs/assets/images/blog/<slug>/
 touch docs/blog/posts/<slug>.md
 ```
 
@@ -136,5 +136,5 @@ This keeps the project work and the writing decoupled — you can hand off to a 
 | Serve locally | `uv run poe serve` |
 | Build | `uv run poe build` |
 | Create post | `touch docs/blog/posts/<slug>.md` |
-| Create image dir | `mkdir -p docs/assets/images/<slug>/` |
+| Create image dir | `mkdir -p docs/assets/images/blog/<slug>/` |
 | Handoff dir | `.agents/handoffs/` |

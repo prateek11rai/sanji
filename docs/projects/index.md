@@ -7,11 +7,11 @@ hide:
 
 <div class="grid cards" markdown>
 
--   :fontawesome-solid-user-doctor:{ .lg .middle } __Doc Aid__
+-   :material-heart-pulse:{ .lg .middle } __DocAid__
 
     ---
 
-    `IoT` wearable device made using Arduino and health sensors to provide hospital management support.
+    Capstone project combining an IoT wearable (Arduino + health sensors) with a real-time Django/Channels dashboard for hospital patient monitoring. Submited at Thapar University, 2023.
 
     [:octicons-arrow-right-24: More Details](./doc-aid/index.md)
 

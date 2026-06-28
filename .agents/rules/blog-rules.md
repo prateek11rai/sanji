@@ -55,7 +55,7 @@ draft: false
 - Add a closing or thematic image near the end
 - **Intro and closing images should be One Piece themed where possible**
 - Place images within relevant sections, not just at section boundaries
-- Images use relative paths: `../../assets/images/<post-slug>/<filename>.{jpg,png}`
+- Images use relative paths: `../../assets/images/blog/<post-slug>/<filename>.{jpg,png}`
 - Every image gets `{ loading=lazy }`
 - Alt text describes what the image shows
 - Use footnotes for image attribution if sourcing from the web
