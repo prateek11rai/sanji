@@ -186,7 +186,7 @@ def _convert_admonitions(body: str) -> str:
     def _repl(m: re.Match) -> str:
         t = m.group(1).strip()
         title_raw = m.group(2)
-        content = m.group(3)
+        content = m.group(3).strip("\n")
         heading = title_raw.strip("\" ") if title_raw else t.title()
         lines = [f"> **{heading}**"]
         for cl in content.split("\n"):
@@ -195,7 +195,7 @@ def _convert_admonitions(body: str) -> str:
                 lines.append(f"> {stripped}")
             else:
                 lines.append(">")
-        return "\n".join(lines)
+        return "\n".join(lines) + "\n"
 
     return re.sub(
         r"!!!\s+(\w+)\s*(\"[^\"]*\")?\s*\n((?:\s{4}[^\n]*\n?)*)",
