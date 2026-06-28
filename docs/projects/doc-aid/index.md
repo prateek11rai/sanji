@@ -191,6 +191,210 @@ The Firebase-to-Django bridge is not included in the repository — the Django s
 ### Simulation Script for Dev Workflow
 `Custom_Script.py` sends random but realistic-range values every 5 seconds, enabling full dashboard testing without any hardware connected.
 
+## :material-code-block-tags: Code Walkthrough
+
+### :material-chip: Arduino Uno — Sensor Read Loop
+
+The Uno runs a 10-second loop reading all three sensors over I2C and analog, then prints a CSV line over Serial:
+
+```cpp
+#include <Wire.h>
+#include <Adafruit_MLX90614.h>
+#include "MAX30100_PulseOximeter.h"
+
+#define REPORTING_PERIOD_MS 10000
+
+Adafruit_MLX90614 mlx = Adafruit_MLX90614();
+PulseOximeter pox;
+
+void setup() {
+  Serial.begin(115200);
+
+  if (!mlx.begin()) {
+    Serial.println("MLX90614 FAILED");
+    while (1);
+  }
+
+  if (!pox.begin()) {
+    // Fallback to random values if sensor fails
+    Serial.println("MAX30100 FAILED — using fallback values");
+  } else {
+    pox.setOnBeatDetectedCallback(onBeatDetected);
+  }
+}
+
+void loop() {
+  pox.update();
+
+  if (millis() - tsLastReport > REPORTING_PERIOD_MS) {
+    int BPM = pox.begin() ? pox.getHeartRate() : random(60, 90);
+    int SpO2 = pox.begin() ? pox.getSpO2() : random(90, 99);
+    float ecg = analogRead(A0);
+    float temp = mlx.readObjectTempC();
+
+    // CSV: BPM,SpO2,ECG_raw,Temp_C
+    String pr = (String)BPM + "," + (String)SpO2 + ","
+              + (String)ecg + "," + (String)temp;
+    Serial.flush();
+    Serial.println(pr);
+
+    tsLastReport = millis();
+  }
+}
+```
+
+Key libraries used:
+- **Adafruit_MLX90614** — I2C driver for the contactless temperature sensor
+- **MAX30100_PulseOximeter** — HR + SpO2 algorithm with built-in beat detection
+- **Wire** — Arduino's built-in I2C library for shared bus communication
+
+If the pulse oximeter fails to initialize (common with loose wiring), the firmware falls back to random values in realistic ranges so the demo keeps running — a pragmatic choice for a capstone prototype.
+
+### :material-wifi: ESP8266 — Firebase Push
+
+The ESP8266 reads the CSV from Serial, timestamps it via NTP (IST, UTC+5:30), and pushes to Firebase RTDB:
+
+```cpp
+#include <ESP8266WiFi.h>
+#include <FirebaseArduino.h>
+#include <NTPClient.h>
+
+#define FIREBASE_HOST "YOUR_FIREBASE_HOST"
+#define FIREBASE_AUTH "YOUR_FIREBASE_SECRET"
+#define WIFI_SSID "YOUR_WIFI_SSID"
+#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org", 19800); // 19800 = UTC+5:30
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  while (WiFi.status() != WL_CONNECTED) delay(500);
+  timeClient.begin();
+  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+}
+
+void loop() {
+  String data;
+  bool received = false;
+
+  while (Serial.available()) {
+    data = Serial.readStringUntil('\n');
+    data.trim();
+    if (data.length() > 0) received = true;
+  }
+
+  if (received) {
+    timeClient.update();
+    time_t epochTime = timeClient.getEpochTime();
+    struct tm *ptm = gmtime((time_t *)&epochTime);
+    String timestamp = String(ptm->tm_year + 1900) + "-"
+                     + String(ptm->tm_mon + 1) + "-"
+                     + String(ptm->tm_mday) + " "
+                     + timeClient.getFormattedTime();
+
+    String path = "/Patient_1/" + timestamp;
+    Firebase.pushString(path, data);
+
+    if (Firebase.failed()) {
+      Serial.println("Firebase push failed");
+    }
+    delay(10000);
+  }
+}
+```
+
+The Firebase path structure is `/Patient_1/<YYYY-M-D HH:MM:SS>` with the raw CSV string as the value. This accumulates a time-series dataset in the cloud that can be consumed for downstream analytics or bridged to the Django dashboard.
+
+### :material-transit-connection-variant: Django Channels — WebSocket Consumer
+
+The Django backend uses Django Channels with Daphne (ASGI server) to handle real-time WebSocket connections. The consumer receives incoming data and broadcasts it to all connected dashboard clients via a group:
+
+```python
+# healthdash/dashboard/consumer.py
+from channels.generic.websocket import AsyncWebsocketConsumer
+import json
+
+class DashConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.groupname = 'dashboard'
+        await self.channel_layer.group_add(
+            self.groupname, self.channel_name
+        )
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
+            self.groupname, self.channel_name
+        )
+
+    async def receive(self, text_data):
+        datapoint = json.loads(text_data)
+        # Broadcast 4 values to all connected clients
+        await self.channel_layer.group_send(
+            self.groupname,
+            {
+                'type': 'deprocessing',
+                'value': datapoint['value'],
+                'value2': datapoint['value2'],
+                'value3': datapoint['value3'],
+                'value4': datapoint['value4'],
+            }
+        )
+
+    async def deprocessing(self, event):
+        # anomaly detection hook lives here (line 43)
+        await self.send(text_data=json.dumps({
+            'value': event['value'],
+            'value2': event['value2'],
+            'value3': event['value3'],
+            'value4': event['value4'],
+        }))
+```
+
+The WebSocket route is wired in `routing.py`:
+
+```python
+# healthdash/healthdash/routing.py
+from django.urls import re_path
+from dashboard.consumer import DashConsumer
+
+websocket_urlpatterns = [
+    re_path(r'ws/polData$', DashConsumer.as_asgi()),
+]
+```
+
+Clients connect to `ws://localhost:8000/ws/polData` and receive real-time updates on every sensor read. The consumer uses an `InMemoryChannelLayer` — no Redis or external broker needed for development.
+
+A placeholder comment on line 43 marks where anomaly detection logic would go (flagging abnormal vitals and alerting doctors), left as an extension point.
+
+### :material-script-text-outline: Simulation Script
+
+For development without hardware, `Custom_Script.py` generates random but realistic values and pushes them over WebSocket:
+
+```python
+import websocket
+import random
+import json
+import time
+
+ws = websocket.WebSocket()
+ws.connect("ws://localhost:8000/ws/polData")
+
+while True:
+    data = {
+        "value": random.randint(60, 100),   # BPM
+        "value2": random.randint(36, 38),    # Temperature °C
+        "value3": random.randint(95, 100),   # SpO2 %
+        "value4": random.randint(300, 600),  # ECG raw ADC
+    }
+    ws.send(json.dumps(data))
+    time.sleep(5)
+```
+
+This made it possible to build and test the entire dashboard without any hardware — essential when working across multiple development sessions.
+
 ## :material-image-multiple-outline: Screenshots
 
 ![Patient dashboard with 4 real-time charts](../../assets/images/projects/doc-aid/patient-2.png){ loading=lazy }
