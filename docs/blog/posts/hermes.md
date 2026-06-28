@@ -4,6 +4,11 @@ authors:
 categories:
   - Self-Hosting
   - AI
+tags:
+  - selfhosting
+  - ai
+  - llm
+  - hermes
 date: 2026-05-17
 draft: false
 ---
