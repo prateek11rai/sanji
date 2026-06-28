@@ -12,13 +12,17 @@ authors:
     - prateek11rai
 categories:
   - CategoryName
+tags:
+  - tag1
+  - tag2
 date: YYYY-MM-DD
 draft: false
 ---
 ```
 
 - Only one author: `prateek11rai`
-- Categories: 1-2 max, PascalCase (e.g. `Self-Hosting`, `Homelab`, `Anime`, `AI`, `Tooling`)
+- Categories: 1-2 max, PascalCase, for site navigation (e.g. `Self-Hosting`, `Homelab`, `Anime`, `AI`, `Tooling`)
+- Tags: 1-4, lowercase, no hyphens or special chars, for dev.to discovery (e.g. `wezterm`, `tmux`, `terminal`, `selfhosting`). These are ignored by MkDocs but used by the syndication script. If omitted, the script falls back to categories.
 - Date: use the actual publication date
 - Never leave `draft: true` for published posts
 
