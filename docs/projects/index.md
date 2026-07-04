@@ -17,6 +17,23 @@ hide:
 
     [:octicons-arrow-right-24: More Details](./doc-aid/index.md)
 
+<!-- Card template for the next project — image classes: .card-cover
+     (screenshot, crops to fill 16:9) or .card-figure (diagram, shown
+     whole on a white plate). Keep exactly one link per card: the CSS
+     stretches it over the whole card and hides its text.
+
+-   :material-robot:{ .lg .middle } __Project Name__
+
+    ---
+
+    ![Alt text](../assets/images/projects/<slug>/<image>.png){ .card-cover loading=lazy }
+
+    One or two sentence description.
+
+    [:octicons-arrow-right-24: More Details](./<slug>/index.md)
+-->
+
+
 <!-- -   :fontawesome-brands-markdown:{ .lg .middle } __It's just Markdown__
 
     ---

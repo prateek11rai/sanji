@@ -21,3 +21,49 @@
   padding: 0.4rem;
   box-sizing: border-box;
 }
+
+/* Whole-card click target: stretch the card's final link (the arrow
+   link) over the entire card. Cards must keep exactly one link for
+   this to behave predictably. */
+.md-typeset .grid.cards > ul > li {
+  position: relative;
+}
+
+.md-typeset .grid.cards > ul > li > p:last-child > a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+/* Collapse the redundant link text — the link stays in the DOM as the
+   click target and screen-reader label. (Keep the paragraph in normal
+   flow: positioning it would re-anchor the stretched overlay. The
+   :has() guard limits this to cards that end in a lone link, so
+   plain-text cards keep their last paragraph.) */
+.md-typeset .grid.cards > ul > li > p:last-child:has(> a:only-child) {
+  height: 0;
+  margin: 0;
+  font-size: 0;
+  line-height: 0;
+}
+
+/* Clickability affordance: a corner arrow that wakes up on hover. */
+.md-typeset .grid.cards > ul > li:has(> p:last-child > a:only-child)::after {
+  content: "→";
+  position: absolute;
+  top: 0.4rem;
+  right: 0.7rem;
+  font-size: 0.9rem;
+  color: var(--md-default-fg-color--lighter);
+  transition: color 125ms, transform 125ms;
+}
+
+.md-typeset .grid.cards > ul > li:has(> p:last-child > a:only-child):hover::after {
+  color: var(--md-accent-fg-color);
+  transform: translateX(0.15rem);
+}
+
+.md-typeset .grid.cards > ul > li:has(> p:last-child > a:only-child):hover {
+  border-color: var(--md-accent-fg-color);
+  box-shadow: var(--md-shadow-z2);
+}
