@@ -11,7 +11,7 @@ hide:
 
     ---
 
-    ![DocAid patient dashboard showing the hospital-wide patient grid with alert states](../assets/images/projects/doc-aid/patient-1.png){ loading=lazy }
+    ![DocAid wearable circuit diagram — Arduino board wired to the health sensors](../assets/images/projects/doc-aid/circuit-diagram.png){ loading=lazy }
 
     Capstone project combining an IoT wearable (Arduino + health sensors) with a real-time Django/Channels dashboard for hospital patient monitoring. Submited at Thapar University, 2023.
 
