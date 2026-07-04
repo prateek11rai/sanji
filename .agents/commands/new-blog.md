@@ -118,13 +118,21 @@ draft: false
 ---
 ```
 
-### Step 9: Verify
+### Step 9: Edit Pass (skill hook — do not skip)
+
+Run the `avoid-ai-writing` skill on the draft (edit-in-place mode, technical voice profile). It strips AI writing patterns; the blog rules keep the personal voice. Apply its edits before any review.
+
+### Step 10: Verify
 
 ```bash
 uv run poe build
 ```
 
-Fix any warnings or errors.
+Fix any warnings or errors. Then test the dev.to transform against the real file — `scripts/syndicate.py`'s `transform_body` must cleanly convert admonitions, `???` collapsibles, and mermaid blocks (fetch the generated mermaid.ink URLs and confirm they return images).
+
+### Step 11: Adversarial Review (skill hook — gates the PR)
+
+Run the `blog-critic` skill on the built post: claims-evidence audit, code-block audit, three reader personas, house-style check. Fix every `would-embarrass` and `needs-caveat` finding before opening the PR. Nitpicks are judgment calls.
 
 ## Handoff Doc Convention
 
@@ -141,3 +149,5 @@ This keeps the project work and the writing decoupled — you can hand off to a 
 | Create post | `touch docs/blog/posts/<slug>.md` |
 | Create image dir | `mkdir -p docs/assets/images/blog/<slug>/` |
 | Handoff dir | `.agents/handoffs/` |
+| De-AI edit pass | `avoid-ai-writing` skill (Step 9, mandatory) |
+| Pre-PR review | `blog-critic` skill (Step 11, gates the PR) |

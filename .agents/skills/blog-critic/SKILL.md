@@ -2,7 +2,7 @@
 name: blog-critic
 description: Adversarial pre-publication review for Sanji blog posts. Use before any post ships (or after major edits) to catch overclaimed causality, unevidenced claims, copy-paste-broken code, and readability failures. Runs three reader personas plus a claims-evidence audit and returns findings ranked by severity with proposed edits.
 version: 1.0.0
-license: MIT
+license: CC0-1.0
 ---
 
 # Blog Critic
