@@ -11,7 +11,7 @@ hide:
 
     ---
 
-    ![DocAid wearable circuit diagram — Arduino board wired to the health sensors](../assets/images/projects/doc-aid/circuit-diagram.png){ loading=lazy width="400" }
+    ![DocAid wearable circuit diagram — Arduino board wired to the health sensors](../assets/images/projects/doc-aid/circuit-diagram.png){ .card-figure loading=lazy }
 
     Capstone project combining an IoT wearable (Arduino + health sensors) with a real-time Django/Channels dashboard for hospital patient monitoring. Submited at Thapar University, 2023.
 

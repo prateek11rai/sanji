@@ -1,0 +1,23 @@
+/* Uniform image frames inside grid cards — images fit the card frame
+   and resize with it as more cards join the grid. */
+
+/* Screenshots / photos: fill the frame, crop the overflow. */
+.md-typeset .grid.cards img.card-cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 0.2rem;
+}
+
+/* Diagrams: shown whole, letterboxed on a neutral plate. */
+.md-typeset .grid.cards img.card-figure {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 0.2rem;
+  padding: 0.4rem;
+  box-sizing: border-box;
+}
