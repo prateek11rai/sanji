@@ -76,8 +76,8 @@ nav:
   - Me: index.md
   - Projects: 
       - Projects: projects/index.md
-      - Doc Aid: 
-        - Doc Aid: projects/doc-aid/index.md
+      - DocAid:
+        - DocAid: projects/doc-aid/index.md
   - Blog:
     - blog/index.md
 
