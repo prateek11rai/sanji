@@ -110,6 +110,9 @@ authors:
     - prateek11rai
 categories:
   - CategoryName
+tags:
+  - tag1
+  - tag2
 date: YYYY-MM-DD
 draft: false
 ---
