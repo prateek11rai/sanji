@@ -17,7 +17,7 @@ draft: false
 
 A Python service I work on did something that shouldn't be possible. It wrote a directory full of files, turned around to upload them, and found nothing. The files were right there — `ls` saw them from another terminal.
 
-The upload logged success. Zero files. No exception. Digging into why took me through three separate layers of the stack, each one lying just a little, and a paper trail going back to 2015 that almost nobody has read.
+The upload logged success. Zero files. No exception. Digging into why took me through three separate layers of the stack — none of which would tell me what actually happened — and a paper trail going back to 2015 that almost nobody has read.
 
 ![Nico Robin standing before the massive red Road Poneglyph inside the Whale Tree of Zou, dwarfed by a wall of ancient glyphs](../../assets/images/blog/python-rglob-race/python-rglob-race-intro.jpg){ loading=lazy }
 
@@ -27,11 +27,11 @@ The record of every one of these problems has been sitting in public bug tracker
 
 If this corner of the stack is new to you, here's the short version of each layer, in the order the post walks them:
 
-1. **Python's `rglob` hides errors.** It walks a folder tree and returns every file it finds — and if the operating system refuses or fails anywhere along the walk, it silently skips instead of complaining. A folder it couldn't read looks exactly like a folder with nothing in it.
-2. **The operating system never promised your listing was fresh.** A listing that runs while files are still being written is allowed to miss the newest ones — on every system — and macOS widens that window in ways Apple has never documented.
-3. **The standard repair tool is weaker on Macs.** `fsync`, the call that's supposed to force pending writes all the way down to disk, only goes halfway on macOS. The real version is a separate, slower call that most software never makes.
+1. **Python's `rglob` hides errors.** It walks a folder tree and returns every file it finds — and if the operating system refuses or fails anywhere along the walk, it silently skips instead of complaining. A folder it couldn't read looks exactly like a folder with nothing in it, and there is no way to find out which one you got.
+2. **The operating system never promised your listing was fresh.** A listing that races concurrent writes is allowed to miss the newest files — on every system — and on macOS the filesystem adds behaviour Apple has never documented in either direction.
+3. **The obvious repair tool doesn't do what its name says.** `fsync`, the call that's supposed to force pending writes all the way down to disk, only goes halfway on macOS — and it was never designed to freshen directory listings in the first place.
 
-Each section below expands one layer, with receipts. When the jargon gets thick, look for the collapsible "in plain English" boxes — they're there so you can keep up without leaving the page.
+Each section below expands one layer, with receipts. When the jargon gets thick, look for the collapsible "in plain English" boxes — they're there so you can keep up without leaving the page. And if you're here because you have this bug *right now*, [jump straight to the fix](#what-we-shipped).
 
 ## A Program That Succeeds at Doing Nothing
 
@@ -67,13 +67,13 @@ Here's the design decision at the heart of this post: when that happens inside `
         pass                              # couldn't read it? pretend it was empty
     ```
 
-    `try/except` is Python's error handling: *try* the risky thing, and if it fails, run the *except* block instead of crashing. An `except` block containing only `pass` means "do nothing, tell no one." It's occasionally the right tool — and it is exactly the wrong default for a function whose entire job is telling you what exists.
+    If the read fails, pretend it succeeded and found nothing. There's no log, no flag, no exception for the caller to catch — a failed read and a genuinely empty folder produce the *identical* return value. That's the property this whole post hangs on: not just that errors are dropped, but that their absence is unobservable.
 
 The paper trail on this is remarkable, and nobody has ever written it up as a story. It starts in May 2015, when a bug tracker user named Gregorio filed [cpython#68308](https://github.com/python/cpython/issues/68308) — asking, reasonably, that `rglob` *stop crashing* on unreadable directories and skip them the way `os.walk` does. Core developer Serhiy Storchaka was the lone dissent, proposing a bash-`failglob`-style option to surface errors instead. That idea was deflected to "a different issue" which was never filed.
 
-The suppression patch, written by Ulrich Petri, then stalled for six months — its reviewer, pathlib author Antoine Pitrou, had stepped away from core development. It got unstuck in January 2016 because Guido van Rossum personally hit the bug: "I'm just going to commit this." Two days later he noticed his own fix made results depend on directory scan order — "dependent on the ordering of the names returned by listdir(), which is just wrong" — re-patched it, and closed with a line that reads differently a decade later: "Should be fixed for real now."
+The suppression patch (by Ulrich Petri) sat unreviewed for months, until Guido van Rossum personally hit the bug in January 2016: "I'm just going to commit this." Two days later he noticed his own fix made results depend on directory scan order — "dependent on the ordering of the names returned by listdir(), which is just wrong" — re-patched it, and closed with a line that reads differently a decade later: "Should be fixed for real now."
 
-It wasn't. In 2019, Thierry Parmentelat filed [cpython#83075](https://github.com/python/cpython/issues/83075) with `strace` output showing that a single symlink into an unreadable directory made `glob()` silently drop *other, perfectly readable* files. Matt Wozniski reduced it to a five-command repro, and Pablo Galindo root-caused it as a regression from a performance rewrite. Nobody had noticed — because the failure mode is silence, exactly as Guido's warning predicted.
+It wasn't. In 2019, Thierry Parmentelat filed [cpython#83075](https://github.com/python/cpython/issues/83075) with `strace` output (a tool that records every call a program makes to the OS) showing that a single symlink into an unreadable directory made `glob()` silently drop *other, perfectly readable* files. Matt Wozniski reduced it to a five-command repro, and Pablo Galindo root-caused it as a regression from a performance rewrite. Nobody had noticed — because the failure mode is silence, exactly as Guido's warning predicted.
 
 The endgame is the telling part. In 2021, [cpython#90208](https://github.com/python/cpython/issues/90208) asked for an opt-in flag to surface the errors. It was resolved in 2023 by pathlib's maintainer Barney Gale going the *other* way: suppressing **all** `OSError` below the top-level path. That shipped in Python 3.13, whose docs now state that errors are "suppressed in many cases, but not all." And in March 2026, Jakub Kuczys demonstrated that `list(Path('/root').glob('*'))` returns `[]` with zero indication anything went wrong — and filed [cpython#146646](https://github.com/python/cpython/issues/146646) as a *docs-only* issue, writing: "Based on #68308 (and just the fact that it has stayed unchanged for years), I assume this is intentional." Eleven years in, the behaviour's age had become the argument for keeping it.
 
@@ -87,30 +87,38 @@ The most rigorous Python codebases already know. Black recurses with `iterdir` a
 !!! quote "Hot Take"
     Documenting a footgun is not fixing a footgun. The 3.13 docs note and the 2026 glob-module note upgraded a decade-old surprise from "undocumented behaviour" to "intended behaviour" without adding a single way to opt out. That's the cheapest possible resolution each time, and it's now load-bearing: any future fix would be a documented-behaviour break.
 
-Switching to `os.scandir` — the lower-level directory-scanning call that pathlib itself is built on — closes this class entirely. Errors propagate, and as a bonus it's roughly twice as fast, because it hands back entries that already carry their file-type information instead of asking the OS again for each one. But it doesn't explain why the *operating system* handed Python a stale view in the first place. That's the next layer down.
+Now the honest question, because you should ask it: did suppression actually *cause* our production incident? I can't prove it — and that is precisely the indictment. If an error fired during those listings, `rglob` ate it. If the kernel simply returned a stale view, `rglob` passed it along. The return value is identical either way: `[]`. The API doesn't just fail — it destroys the evidence of *how* it failed, which means the first question of any incident review ("what actually happened?") is unanswerable by design.
+
+What I can offer is the one measurement we did get. While reproducing locally, `rglob` would come back empty while `os.scandir` — the lower-level directory-scanning call that pathlib itself is built on — returned the full set of files when called at essentially the same instant. Two readers of the same kernel state disagreeing is what turns pathlib from bystander into suspect. Though even here, honesty: the two calls are microseconds apart, and we could never fully separate "pathlib dropped entries" from "the view changed between the calls."
+
+Switching to `os.scandir` closes the silence class entirely — errors propagate, so at minimum you learn *which* failure you have. But it can't conjure files the operating system didn't report. That's the next layer down.
 
 ## Layer Two — The Filesystem Never Promised You a Fresh Listing
 
 Here's the part I would have called a kernel bug, before I read the spec. Whenever any program lists a folder — `ls`, Finder, Python's `os.listdir`, pathlib's walk — it ultimately goes through one low-level operation: `readdir`, the operating system's "tell me what's in this directory" call. POSIX, the standard that defines how that call must behave on Unix-like systems, says something remarkable in the [readdir specification](https://pubs.opengroup.org/onlinepubs/009695399/functions/readdir_r.html): "If a file is removed from or added to the directory after the most recent call to opendir() or rewinddir(), whether a subsequent call to readdir() returns an entry for that file is unspecified."
 
-Unspecified. A listing that races a write is allowed to miss files, *by design*, on every POSIX system. That clause, plus layer one silently eating whatever inconsistency it produces, is already enough to explain the production incidents on Linux. What it doesn't explain is why the local repro on my Mac was so much *worse* — and that's an APFS question. APFS is the copy-on-write filesystem on every modern Mac, and the honest answer to what it does to directory listings under pressure is that nobody outside Apple knows.
+Unspecified. A listing that races concurrent writes is allowed to miss files, *by design*, on every POSIX system. But read the clause carefully, because it's easy to apply too broadly — I did at first: it covers files added *while the directory is being read*. Our production pipeline was, as far as we could reconstruct, sequential — write, close, *then* list. POSIX has no carve-out for that. A filesystem that returns a stale view after a completed write-and-close isn't exercising the spec's freedom; something else is going on.
+
+So here is the honest statement about production, on Linux: **we never definitively identified the mechanism.** The candidates: the container filesystem (production runs in containers, and overlay filesystems have a documented history of readdir caching quirks); writes that weren't as complete as the code believed; or an error that fired and was eaten — and Layer One explains why that last one can never be ruled out. The listing was wrong, the API was silent about why, and the crime scene was already clean by the time anyone looked.
+
+The local repro on my Mac is where things got measurably stranger — and that's an APFS question. First, the mental model that makes any of this thinkable: creating a file is really *two* writes — the file's bytes, and the folder's record that the name exists — and nothing guarantees they become visible at the same instant. APFS is the copy-on-write filesystem on every modern Mac, and the honest answer to what it does to directory listings under pressure is that nobody outside Apple knows.
 
 ??? info "In plain English — a new file is two writes, not one"
     Creating a file changes two separate things: the file's contents (the bytes you wrote) and the folder's own records saying "a file with this name now exists here" — the *metadata*. They are not committed at the same instant. APFS batches its metadata updates for speed using a copy-on-write structure: it builds a new version of the folder's records off to the side and atomically swaps a pointer when it commits. Until that swap happens, both of these can be true at once: the file's bytes are fully written and you can `open()` it by name, *and* a directory listing still reads the old records and doesn't show it. "The file exists" and "the folder doesn't list it" are not contradictions — they're two different questions asked of two different data structures.
 
 I want to be careful here, because this is the least-documented layer of the three. Apple's [APFS Reference](https://developer.apple.com/support/downloads/Apple-File-System-Reference.pdf) describes the copy-on-write B-tree design across 181 pages and does not mention `readdir` once. There is no published contract for when a freshly created file becomes visible to directory enumeration. What I saw while reproducing locally — files that `stat` (the "does this exact path exist?" check) and `open` could see by name while a concurrent recursive listing came back without them, under burst writes on an Apple Silicon laptop — is consistent with metadata commits lagging data writes, but I can't point you at an Apple document that says so, because there is no Apple document that says anything about it at all. The silence is the finding.
 
-What *is* on the record is enough to stop giving APFS the benefit of the doubt. In 2020, Giovanni Pizzi of the AiiDA project filed [bpo-41291](https://bugs.python.org/issue41291) after tests caught freshly written files reading back empty with `st_ino == 0`. CPython's macOS maintainer Ronald Oussoren reproduced it in pure C and bisected it by filesystem: the race fires on APFS, and not on HFS+. His conclusion: "This appears to be a bug in the APFS filesystem implementation." It was reported to Apple as FB8009608. There is no public resolution.
+What *is* on the record is enough to stop giving APFS the benefit of the doubt — with precision about what it shows. In 2020, Giovanni Pizzi of the AiiDA project filed [bpo-41291](https://bugs.python.org/issue41291): a *delete-versus-open* race, where a file being replaced while another process opens it yields empty reads and `st_ino == 0` (an inode number of zero — the file's on-disk identity, reading back as "nothing"). That is **not a listing bug**, and I'm not claiming it as one — but it is the closest thing on the public record to an Apple-acknowledged APFS race of any kind. CPython's macOS maintainer Ronald Oussoren reproduced it in pure C and bisected it by filesystem: fires on APFS, not on HFS+. His conclusion: "This appears to be a bug in the APFS filesystem implementation." Reported to Apple as FB8009608. No public resolution.
 
-Two years earlier, Gregory Szorc had [profiled Firefox builds on macOS](https://gregoryszorc.com/blog/2018/10/29/global-kernel-locks-in-apfs/) and found `readdir` on APFS serializing on a global kernel lock — the machine spending ~75% of its CPU time in the kernel just listing directories. Different symptom, same neglected code path, same ending: a radar filed, a partial improvement shipped without comment, no acknowledgement.
+Two years earlier, Gregory Szorc had [profiled Firefox builds on macOS](https://gregoryszorc.com/blog/2018/10/29/global-kernel-locks-in-apfs/) and found `readdir` on APFS serializing on a global kernel lock — the machine spending ~75% of its CPU time in the kernel just listing directories. A performance finding, not a correctness one — but the same neglected code path, and the same ending: a radar filed, a partial improvement shipped without comment, no acknowledgement.
 
-One precision note, because it matters for anyone debugging their own version of this: several distinct mechanisms produce the "listing lies" symptom, and they are not the same bug. A writer in another process racing your listing is POSIX-unspecified territory. Files changing while you're mid-walk is a TOCTOU problem — time-of-check to time-of-use, meaning the world changed between when you looked and when you acted. `bpo-41291` is an apparent APFS defect. iCloud and Dropbox "dataless" files break globbing in their own special way. And a file you wrote but never flushed is a *you* problem. The fix depends on which one you have. Production, on Linux, appeared to be the first one amplified by pathlib's silence; the local Mac repro stacked, on the evidence of bpo-41291, some genuine APFS strangeness on top.
+One precision note, because it matters for anyone debugging their own version of this: several distinct mechanisms produce the "listing lies" symptom, and they are not the same bug. A writer in another process racing your listing is POSIX-unspecified territory. Files changing while you're mid-walk is a TOCTOU problem — time-of-check to time-of-use, meaning the world changed between when you looked and when you acted. `bpo-41291` is an apparent APFS defect. iCloud and Dropbox "dataless" files break globbing in their own special way. And a file you wrote but never flushed is a *you* problem. The fix depends on which one you have — and this is where I have to practice what I'm preaching about evidence: production, on Linux, remains formally unsolved; the mechanism candidates above are indistinguishable after the fact. The local Mac repro showed listing inconsistency we could measure but never fully attribute. When your listing API is silent, every one of these mechanisms produces the identical observable: `[]`.
 
-So the instinctive fix is: force the pending metadata down before listing. Sync the directory. Which brings us to the third layer, because on a Mac, that doesn't do what you think either.
+So the instinctive fix is: force the pending metadata down before listing — sync the directory. Hold that instinct, because it's about to get complicated twice over: the syncing tool doesn't mean what its name says on a Mac, and it was never a listing-freshness tool *anywhere*.
 
 ## Layer Three — fsync Is a Polite Request on macOS
 
-On Linux, `fsync(fd)` means: this data is on durable storage before the call returns. On macOS, `fsync(fd)` means: this data has been handed to the drive, which may keep it in a volatile cache and write it whenever it feels like it. Apple's own [fsync man page](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/fsync.2.html) has said so for over twenty years, and it's blunt about the consequences: "This is not a theoretical edge case."
+On Linux, `fsync(fd)` — the `fd` is a *file descriptor*, the numeric handle the OS gives you for anything you've opened, folders included — means: this data is on durable storage before the call returns. On macOS, `fsync(fd)` means: this data has been handed to the drive, which may keep it in a volatile cache and write it whenever it feels like it. Apple's own [fsync man page](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/fsync.2.html) has said so for over twenty years, and it's blunt about the consequences: "This is not a theoretical edge case."
 
 ??? info "In plain English — the three stops between your program and the disk"
     When you write a file, the bytes make three stops: your operating system's memory (fast, lost if the OS crashes), the drive's own internal cache (fast, lost if power cuts out), and finally the durable flash storage (survives anything short of hardware failure). `fsync` is the call that's supposed to mean "push my data all the way down, then tell me." On Linux it pushes through all three stops. On macOS it stops at the drive's cache — so data that `fsync` just claimed was safe can still be eaten by a power cut. The macOS call that pushes all the way is `fcntl(fd, F_FULLFSYNC)`, and it's dramatically slower — which is exactly why it isn't the default, and exactly why almost nothing uses it.
@@ -126,11 +134,11 @@ graph LR
 
 `fsync` on Linux pushes your data to stop 3. `fsync` on macOS stops at 2 and reports success anyway. The real flush is a separate call, `fcntl(fd, F_FULLFSYNC)`, which pushes to stop 3 and has existed since Mac OS X 10.3 in 2003. The canonical explanation came from Apple filesystem engineer Dominic Giampaolo on the [PostgreSQL mailing list in 2005](https://postgrespro.com/list/thread-id/1658794) — he'd verified drive-cache behaviour with a logic analyzer on the ATA cable, and described the full flush as "a heavy handed operation... But in an app like a database, it is essential." The database world quietly listened: SQLite added `PRAGMA fullfsync` in 2004, PostgreSQL grew `fsync_writethrough`. Everyone who truly needed durability opted in twenty years ago, which is precisely why there was never enough pressure to change the default.
 
-The rest of us found out in February 2022, when Asahi Linux's Hector Martin measured an M1's SSD doing [~46 IOPS with real flushes versus ~40,000 without](https://mjtsai.com/blog/2022/02/17/apple-ssd-benchmarks-and-f_fullsync/) and called it benchmark cheating. Michael Tsai's roundup of the ensuing fight is the fairest record — including the counter-voices: most non-Apple consumer drives simply lie about flushes, and when Russ Bishop power-loss-tested four NVMe SSDs, half of them lost data they had claimed to flush. Alex Miller's ["Darwin's Deceptive Durability"](https://transactional.blog/blog/2022-darwins-deceptive-durability) distilled it for database people into three deadpan headings: fsync does not fsync, O_DSYNC does not O_DSYNC, SQLite is not durable.
+The rest of us found out in February 2022, when Asahi Linux's Hector Martin measured an M1's SSD doing [~46 write operations per second with real flushes versus ~40,000 without](https://mjtsai.com/blog/2022/02/17/apple-ssd-benchmarks-and-f_fullsync/) and called it benchmark cheating. Michael Tsai's roundup of the ensuing fight is the fairest record — including the counter-voices: most non-Apple consumer drives simply lie about flushes, and when Russ Bishop power-loss-tested four NVMe SSDs, half of them lost data they had claimed to flush. Alex Miller's ["Darwin's Deceptive Durability"](https://transactional.blog/blog/2022-darwins-deceptive-durability) distilled it for database people into three deadpan headings: fsync does not fsync, O_DSYNC does not O_DSYNC, SQLite is not durable.
 
-If this shape feels familiar, it's because the same thing happened to Linux, differently. In 2018, PostgreSQL's Craig Ringer discovered that when Linux `fsync` *fails*, the kernel drops the dirty pages and the next `fsync` returns success — the data is gone but nothing will ever tell you again. His report is a small masterpiece of dry understatement: "The write never made it to disk, but we completed the checkpoint, and merrily carried on our way. Whoops, data loss." The community called it fsyncgate; [Jonathan Corbet's LWN writeup](https://lwn.net/Articles/752063/) and [Dan Luu's verbatim archive](https://danluu.com/fsyncgate/) are the definitive accounts. PostgreSQL's eventual fix was to stop trusting the syscall entirely and PANIC on the first failure. Two years later, a [USENIX study](https://research.cs.wisc.edu/adsl/Publications/cuttlefs-tos21.pdf) checked whether *any* major application handles fsync failure correctly. None do.
+This genre has a famous Linux chapter too — fsyncgate, 2018: PostgreSQL's Craig Ringer discovered that when Linux `fsync` *fails*, the kernel silently discards the data and the next call reports success. His report is dry understatement at its finest — "The write never made it to disk, but we completed the checkpoint, and merrily carried on our way. Whoops, data loss." [Jonathan Corbet's LWN writeup](https://lwn.net/Articles/752063/) and [Dan Luu's verbatim archive](https://danluu.com/fsyncgate/) tell it properly, and a later [USENIX study](https://research.cs.wisc.edu/adsl/Publications/cuttlefs-tos21.pdf) found no major application handles fsync failure correctly even now. The takeaway for this post: durability primitives whose names promise more than they deliver are a genre, not a macOS quirk.
 
-For our bug, the punchline is narrower: the tool you'd reach for to close layer two — sync the parent directory, then list — is itself weaker than its name on the exact platform where layer two bites. To actually barrier the metadata on a Mac, you need `F_FULLFSYNC` on the directory file descriptor, at a cost of 5–20ms on NVMe.
+Now the caveat this section has been building to — and it cuts against our own fix, so it stays in. `fsync` is a *durability* tool: it controls what survives a power cut. It is not, on any system I can find documentation for, a *visibility* tool — nothing in POSIX or Apple's docs says that syncing a directory's file descriptor refreshes what the next `readdir` returns on a running machine. On Linux it has no defined effect on our problem at all. On macOS, the theory that `F_FULLFSYNC` forces APFS to commit the metadata transaction that feeds enumeration is exactly that — a theory, resting on the same undocumented behaviour as Layer Two. We put the barrier in our fix anyway: it costs 5–20ms on NVMe, and if the theory is right, it tightens the window. But I won't pretend we proved it does anything. Keep that skepticism handy for the next section.
 
 ## How Three Half-Truths Compound
 
@@ -139,54 +147,79 @@ Any one of these alone is trivia. Stacked, they turn the friendliest file API in
 ```mermaid
 sequenceDiagram
     participant W as Writer
-    participant K as Kernel / APFS
+    participant K as Kernel / filesystem
     participant R as Reader (rglob)
     W->>K: write() + close() burst
-    Note over K: data accepted, directory<br/>metadata commit pending
+    Note over K: directory view can lag or err<br/>(mechanism varies by OS)
     R->>K: readdir(parent)
-    K-->>R: stale view (files missing)
-    Note over R: transient OSError mid-walk<br/>swallowed by pathlib
+    K-->>R: empty or partial view
+    Note over R: and IF any error fired mid-walk,<br/>pathlib swallowed it — unknowable
     R-->>R: returns [] — looks like success
 ```
 
-| Layer | What it's supposed to guarantee | What it actually guarantees on a Mac |
+| Layer | What it's supposed to guarantee | What it actually guarantees |
 |---|---|---|
-| `Path.rglob` | Returns every file in the tree | Returns whatever `readdir` delivered, silently dropping anything that errored |
-| `readdir` on APFS | The current contents of the directory | Whatever the current B-tree state says; freshness under concurrent writes is unspecified |
-| `fsync(dir_fd)` | Pending metadata committed to durable storage | Committed to the kernel's buffers; the drive cache needs `F_FULLFSYNC` |
+| `Path.rglob` | Returns every file in the tree | Returns whatever `readdir` delivered, silently dropping anything that errored — and never telling you whether anything did |
+| `readdir` | The current contents of the directory | Under concurrent writes: unspecified by POSIX. After sequential writes: should be current — but APFS's behaviour is undocumented and container filesystems have their own quirks |
+| `fsync(dir_fd)` | Pending metadata committed to durable storage | Kernel buffers only on macOS (`F_FULLFSYNC` for the drive) — and on no system is it a documented listing-freshness barrier |
 
-In production on Linux, the stack is two layers deep — the POSIX-unspecified readdir window and pathlib's silence on top of it. On a Mac dev box it's all three, which is why the bug was easier to reproduce at my desk than it ever was to catch in the logs. The window is tens of milliseconds. The probability per call is tiny. The probability across a multi-hour pipeline run writing thousands of files is not — and every miss looks exactly like a legitimately empty directory.
+In production on Linux we can name the symptom but not the mechanism — the listing was wrong and the API was silent about why. On a Mac dev box, two more undocumented layers join in, which is why the bug was easier to reproduce at my desk than it ever was to catch in the logs. The window is tens of milliseconds. The probability per call is tiny. The probability across a multi-hour pipeline run writing thousands of files is not — and every miss looks exactly like a legitimately empty directory.
 
 The reframe that finally made the fix obvious: a directory listing is not a query. It's a measurement. It has noise, it has a sampling window, and if you need it to be right, you have to engineer for that the way you would for any other measurement.
 
 ## What We Shipped
 
-Four moves, layered so that each one covers the residual risk of the previous:
+First: do you even need this? Only if your code lists a directory *in the same breath* as writing into it — write-then-immediately-list, or listing while writers may still be active. A static folder read at startup is fine with plain `rglob`. If that's you, close this tab guilt-free.
 
-1. **Replace `rglob` with an `os.scandir` recursion** that re-raises `OSError` as a typed error. Silent suppression becomes a loud failure.
-2. **Barrier the directory metadata before listing** — `F_FULLFSYNC` on Darwin, `os.fsync` elsewhere.
-3. **Reconcile two independent listings** and retry briefly if they disagree.
-4. **Log a structured warning** if reconciliation never converges, so operators hear about the cases we can't fix.
+For everyone else, four moves, each honest about what it does and doesn't buy:
+
+1. **Replace `rglob` with an `os.scandir` recursion that raises on error.** The one *provable* fix: silence becomes a loud failure, so you always know which kind of empty you got.
+2. **Retry briefly with backoff.** The unglamorous move that, in truth, probably does most of the work.
+3. **Nudge the directory metadata before each attempt** — `F_FULLFSYNC` on macOS, `os.fsync` elsewhere. This is the theory-not-proof part flagged above: cheap, harmless, unproven.
+4. **A tripwire and a loud log.** Two same-instant top-level listings that disagree mean the directory is visibly in flux; if it never settles, operators hear about it instead of nobody.
+
+The block below is complete — imports, exception, logging — paste it and it runs:
 
 ```python
-F_FULLFSYNC = 51  # macOS-only fcntl command
+import fcntl
+import logging
+import os
+import sys
+import time
+from pathlib import Path
+
+logger = logging.getLogger(__name__)
+
+# In the stdlib on macOS builds of Python; the raw value elsewhere is inert.
+F_FULLFSYNC = getattr(fcntl, "F_FULLFSYNC", 51)
+
+
+class StorageListingError(Exception):
+    """A directory listing failed — surfaced instead of swallowed."""
+
 
 def _flush_directory_metadata(path: Path) -> None:
-    """Force pending directory mutations to commit before we list."""
+    """Nudge the kernel to commit pending directory metadata.
+
+    fsync is a durability primitive; treating it as a listing-freshness
+    barrier is a theory, not a documented contract. Kept because it is
+    cheap and cannot make things worse."""
     fd = os.open(path, os.O_DIRECTORY)
     try:
         if sys.platform == "darwin":
             try:
                 fcntl.fcntl(fd, F_FULLFSYNC)
             except OSError:
-                os.fsync(fd)  # APFS-on-a-not-real-disk fallback
+                os.fsync(fd)  # e.g. network/virtual filesystems
         else:
             os.fsync(fd)
     finally:
         os.close(fd)
 
+
 def _scandir_recursive(path: Path) -> list[Path]:
-    """Like Path.rglob, but surfaces OSError instead of dropping entries."""
+    """Like Path.rglob('*') for files, except errors raise instead of
+    silently shrinking the result."""
     out: list[Path] = []
     try:
         with os.scandir(path) as it:
@@ -195,35 +228,36 @@ def _scandir_recursive(path: Path) -> list[Path]:
                     out.extend(_scandir_recursive(Path(entry.path)))
                 elif entry.is_file(follow_symlinks=False):
                     out.append(Path(entry.path))
-    except (PermissionError, FileNotFoundError) as exc:
-        raise StorageListingError(path=str(path)) from exc
+    except OSError as exc:
+        raise StorageListingError(f"could not list {path}") from exc
     return out
 
+
 def safe_list_directory(path: Path, max_attempts: int = 3) -> list[Path]:
-    """Race-safe recursive listing for freshly written directories."""
-    _flush_directory_metadata(path)
-    backoffs = (0, 0.05, 0.10, 0.20)
+    """Recursive file listing, hardened for directories written moments ago."""
+    backoffs = (0.0, 0.05, 0.10)
     last: list[Path] = []
     for attempt in range(max_attempts):
-        if backoffs[attempt]:
-            time.sleep(backoffs[attempt])
-        scandir_files = _scandir_recursive(path)
-        listdir_set = set(os.listdir(path))
-        scandir_top = {p.name for p in path.iterdir()}
-        if listdir_set == scandir_top:
-            return scandir_files
-        last = scandir_files
+        if attempt:
+            time.sleep(backoffs[min(attempt, len(backoffs) - 1)])
+        _flush_directory_metadata(path)
+        listing = _scandir_recursive(path)
+        # Tripwire, not proof: two top-level listings taken back-to-back
+        # that DISAGREE mean the directory is visibly in flux. Agreement
+        # does not prove the recursive listing is complete.
+        if set(os.listdir(path)) == {p.name for p in path.iterdir()}:
+            return listing
+        last = listing
     logger.warning(
-        "directory_listing_never_converged",
-        path=str(path),
-        attempts=max_attempts,
+        "directory listing never converged: path=%s attempts=%d",
+        path, max_attempts,
     )
     return last
 ```
 
-About 60 lines — bring your own exception type and logger — and it drops in at every `rglob` call site with no API change for callers. Copy it if you have the same problem.
+It drops in at every `rglob` call site with one deliberate behavioural change: where `rglob` silently returned partial results, this *raises*. That is the point — if your caller can't handle a `StorageListingError`, it was already mishandling the invisible version of the same event.
 
-The Darwin branch exists because dev machines and local test runs live on Macs even though production doesn't; the same code takes the plain `os.fsync` path on the Linux boxes that actually serve traffic. The cost on a Mac is dominated by `F_FULLFSYNC`: 5–20ms per listing on NVMe. On Linux it's far cheaper. For a pipeline that lists a handful of times per run and then spends minutes uploading, that's a trade we'll make every day. And I'll be honest about what it is: probabilistic, not deterministic. A long enough metadata stall would outlast the retry loop. The warning log is the admission that we've tightened the window, not closed it.
+Which parts can I defend, and how hard? The scandir-and-raise part: fully — it provably closes the silence class. The retry: empirically — it's the standard answer to transient inconsistency, whatever the mechanism. The flush: it's the belt-and-braces theory flagged in Layer Three; we never ran the ablation that would separate its contribution from the retry's, and I'd genuinely love to see someone do it. The tripwire: it detects churn between two instants, not stable staleness — a steadily wrong view sails through it, which is why the warning log exists. The whole thing is probabilistic, not deterministic. We tightened the window; we did not close it. The Darwin branch exists because dev machines live on Macs even though production is Linux; the cost on a Mac is 5–20ms of `F_FULLFSYNC` per attempt, far cheaper on Linux, and negligible against upload latencies either way.
 
 ## The Fixes That Don't Trust Listings
 
@@ -241,10 +275,10 @@ Sit with the irony for a second: an object store on the other side of the planet
 
 Almost nothing in this post is my discovery. The record was public the whole time — it just took a production incident to make me read it. Credit where it belongs:
 
-- **The pathlib thread**: Gregorio (the 2015 report), Serhiy Storchaka (the road not taken), Guido van Rossum (the warning that came true), Thierry Parmentelat and Matt Wozniski (the strace proof), Pablo Galindo (the regression fix), Barney Gale (3.13's resolution), and Jakub Kuczys (the 2026 issue that finally got it documented).
+- **The pathlib thread**: Gregorio (the 2015 report), Serhiy Storchaka (the road not taken), Ulrich Petri (the patch), Guido van Rossum (the warning that came true), Thierry Parmentelat and Matt Wozniski (the strace proof), Pablo Galindo (the regression fix), Barney Gale (3.13's resolution), and Jakub Kuczys (the 2026 issue that finally got it documented).
 - **The Darwin durability thread**: Dominic Giampaolo (the 2005 explanation that still holds), Hector Martin (the numbers), Michael Tsai (the fairest record of the fight), Alex Miller (the essay to read first), and Howard Oakley (the calm explainer).
 - **The fsyncgate thread**: Craig Ringer (the discovery), Jonathan Corbet (the no-villains account), Dan Luu (the archive, and the whole "files are hard" genre), Thomas Munro and Andres Freund (the fix), and Ted Ts'o (the kernel's side of the story, which deserves to be heard).
-- **The APFS thread**: Giovanni Pizzi and Ronald Oussoren (the one acknowledged race, bpo-41291), and Gregory Szorc (the readdir profiling). This thread is the shortest because almost nobody has dug here. That should probably change.
+- **The APFS thread**: Giovanni Pizzi and Ronald Oussoren (bpo-41291 — the one Apple-acknowledged APFS race, a delete-vs-open one rather than a listing one), and Gregory Szorc (the readdir profiling). This thread is the shortest because almost nobody has dug here. That should probably change.
 
 If you take one action from this post, make it structural: treat directory listings as measurements, surface your errors, and when correctness matters, publish atomically or use a marker. The standard library teaches you to trust the listing. Production says don't.
 

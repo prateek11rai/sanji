@@ -76,8 +76,8 @@ nav:
   - Me: index.md
   - Projects: 
       - Projects: projects/index.md
-      - Doc Aid: 
-        - Doc Aid: projects/doc-aid/index.md
+      - DocAid:
+        - DocAid: projects/doc-aid/index.md
   - Blog:
     - blog/index.md
 
@@ -104,6 +104,7 @@ markdown_extensions:
 # Extra CSS
 extra_css:
   - extra/css/dracula.css
+  - extra/css/cards.css
 
 # Extra Configuration
 extra:
