@@ -186,6 +186,24 @@ def _strip_mkdocs_attrs(body: str) -> str:
     return re.sub(r"\{\s*\.[a-zA-Z0-9_-]+[\s,.]*[a-zA-Z0-9_-]*\s*\}", "", body)
 
 
+def _convert_collapsibles(body: str) -> str:
+    """Convert MkDocs `??? info "Title"` collapsible blocks into dev.to
+    {% details %} liquid tags. Content is dedented (not stripped) so fenced
+    code blocks and their indentation survive."""
+    def _repl(m: re.Match) -> str:
+        title_raw = m.group(2)
+        heading = title_raw.strip("\" ") if title_raw else m.group(1).strip().title()
+        lines = [re.sub(r"^ {4}", "", ln) for ln in m.group(3).split("\n")]
+        inner = "\n".join(lines).strip("\n")
+        return f"{{% details {heading} %}}\n\n{inner}\n\n{{% enddetails %}}\n\n"
+
+    return re.sub(
+        r"\?\?\?\+?\s+(\w+)\s*(\"[^\"]*\")?\s*\n((?:(?:[ ]{4}[^\n]*)?\n)*)",
+        _repl,
+        body,
+    )
+
+
 def _convert_admonitions(body: str) -> str:
     def _repl(m: re.Match) -> str:
         t = m.group(1).strip()
@@ -230,6 +248,7 @@ def transform_body(body: str) -> str:
     body = _strip_loading_lazy(body)
     body = _strip_mkdocs_attrs(body)
     body = _replace_icons(body)
+    body = _convert_collapsibles(body)
     body = _convert_admonitions(body)
     body = _replace_image_urls(body)
     body = _unwrap_footnote_defs(body)
