@@ -169,6 +169,10 @@ plugins:
       enabled: true
   - social:
       enabled: true
+      cards_layout_options:
+        background_color: "#21222c"
+        color: "#f8f8f2"
+        font_family: JetBrains Mono
   - blog:
       authors: true
       draft_on_serve: true
