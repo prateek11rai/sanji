@@ -19,7 +19,7 @@ A Slack thread about our climbing AI bill, plus word that per-user usage limits 
 
 The cost only showed up after the fact, in a dashboard I never opened. So I built a gauge instead. My terminal footer now reads out the session's vitals on every render, and the whole thing is one shell script.
 
-![Tony Tony Chopper in his doctor form aboard the Thousand Sunny, checking a crewmate's pulse](../../assets/images/blog/claude-code-statusline-monitoring/chopper-intro.jpg){ loading=lazy }
+![Tony Tony Chopper, the Straw Hat crew's doctor, in his post-timeskip anime portrait](../../assets/images/blog/claude-code-statusline-monitoring/chopper-intro.jpg){ loading=lazy }
 
 <!-- more -->
 
@@ -134,6 +134,8 @@ The script and its install live in my [dotfiles](https://github.com/prateek11rai
 
 Chopper is the Straw Hats' doctor. He doesn't wait for a crewmate to drop mid-fight; he watches their vitals and calls it early. That's what this footer is — a vitals monitor for the session, taking its pulse on every render. And when the window gets tight there's a bit of Sanji in it too: rationing a limited pantry so nothing goes to waste, which is the entire job of `rtk` and, fittingly, the name over the door of this blog.
 
-![Tony Tony Chopper with his medical bag, keeping watch over the crew](../../assets/images/blog/claude-code-statusline-monitoring/chopper-end.jpg){ loading=lazy }
+Chopper only became that doctor because Dr. Hiriluk, the quack everyone laughed at, believed in him first.
 
-[^1]: Intro and closing images are One Piece art via the [One Piece Wiki](https://onepiece.fandom.com/). Attribution and credits — please [contact](mailto:prateek11rai@protonmail.com) if anything needs updating.
+![Dr. Hiriluk, tears streaming down his face, hugging a young Chopper on snowy Drum Island — the doctor who first believed in him](../../assets/images/blog/claude-code-statusline-monitoring/chopper-end.jpg){ loading=lazy }
+
+[^1]: Intro and closing images are from the One Piece anime via the [One Piece Wiki](https://onepiece.fandom.com/): the [intro portrait of Chopper](https://onepiece.fandom.com/wiki/File:Tony_Tony_Chopper_Anime_Post_Timeskip_Infobox.png) and the closing scene of [Dr. Hiriluk and Chopper](https://onepiece.fandom.com/wiki/File:Hiriluk_Hugs_Chopper.png). Attribution and credits — please [contact](mailto:prateek11rai@protonmail.com) if anything needs updating.
