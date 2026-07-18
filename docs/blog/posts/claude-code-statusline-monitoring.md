@@ -19,7 +19,7 @@ A Slack thread about our climbing AI bill, plus word that per-user usage limits 
 
 The cost only showed up after the fact, in a dashboard I never opened. So I built a gauge instead. My terminal footer now reads out the session's vitals on every render, and the whole thing is one shell script.
 
-![Tony Tony Chopper, the Straw Hat crew's doctor, in his post-timeskip anime portrait](../../assets/images/blog/claude-code-statusline-monitoring/chopper-intro.jpg){ loading=lazy }
+![Luffy raises his fist in the snow outside Drum Castle, inviting Tony Tony Chopper (the little reindeer doctor, at bottom right) to join the Straw Hat crew](../../assets/images/blog/claude-code-statusline-monitoring/chopper-intro.jpg){ loading=lazy }
 
 <!-- more -->
 
@@ -138,4 +138,4 @@ Chopper only became that doctor because Dr. Hiriluk, the quack everyone laughed 
 
 ![Dr. Hiriluk, tears streaming down his face, hugging a young Chopper on snowy Drum Island — the doctor who first believed in him](../../assets/images/blog/claude-code-statusline-monitoring/chopper-end.jpg){ loading=lazy }
 
-[^1]: Intro and closing images are from the One Piece anime via the [One Piece Wiki](https://onepiece.fandom.com/): the [intro portrait of Chopper](https://onepiece.fandom.com/wiki/File:Tony_Tony_Chopper_Anime_Post_Timeskip_Infobox.png) and the closing scene of [Dr. Hiriluk and Chopper](https://onepiece.fandom.com/wiki/File:Hiriluk_Hugs_Chopper.png). Attribution and credits — please [contact](mailto:prateek11rai@protonmail.com) if anything needs updating.
+[^1]: Intro and closing images are from the One Piece anime via the [One Piece Wiki](https://onepiece.fandom.com/): the [intro scene of Luffy inviting Chopper to join](https://onepiece.fandom.com/wiki/File:Luffy_Tells_Chopper_to_Join.png) and the closing scene of [Dr. Hiriluk and Chopper](https://onepiece.fandom.com/wiki/File:Hiriluk_Hugs_Chopper.png). Attribution and credits — please [contact](mailto:prateek11rai@protonmail.com) if anything needs updating.
