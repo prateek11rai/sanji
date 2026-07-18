@@ -21,6 +21,7 @@ This directory contains conventions and tooling for maintaining consistent blog 
 - Author is always `prateek11rai` (configured in `docs/blog/.authors.yml`)
 - Every post needs One Piece intro image + closing image + one thematic reference (minimum)
 - Handoff docs decouple project work from blog writing — use `.agents/handoffs/<slug>.md`
+- **No `Co-Authored-By` trailers on commits, and no AI attribution in PR descriptions** — do not add "Generated with Claude Code", "Created using Claude Code", or similar co-author/footer lines. Commits and PRs are authored solely by the owner.
 
 ## Workflow with Handoff Docs
 
