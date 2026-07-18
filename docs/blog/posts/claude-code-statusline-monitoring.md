@@ -40,7 +40,7 @@ Registering it is two lines in `~/.claude/settings.json`:
 }
 ```
 
-The whole script is one pass over the JSON. Here is the field extraction, trimmed to the parts that matter:
+Here's the field extraction, trimmed to what matters:
 
 ```bash
 # One jq pass over the JSON Claude Code pipes in on every render.
@@ -100,10 +100,7 @@ Bottom row, left to right: identity and branch, then `Opus 4.8 (1M context)`, `x
 
 Before committing to this, I compared it against `ccstatusline`, the popular off-the-shelf option. The deciding factor was where the data lives.
 
-The `statusLine` JSON hands you almost everything worth showing for free: model, effort, context, cost, cache, rate limits. The one thing it has no field for is an extra-usage or overage dollar figure. `ccstatusline` fills that gap by calling a separate Usage API. I didn't want the dollar figure badly enough to take on a second data source and its auth, so I kept the script and just added the fields it was missing.
-
-!!! tip "Trivia"
-    The reason a pure status-line script can't show your overage in dollars is that the `statusLine` JSON simply doesn't expose it. You get the 5h/7d percentages and reset times, but the overflow spend lives behind a different API. That single missing field is the whole reason tools like `ccstatusline` reach outside the JSON.
+The `statusLine` JSON hands you almost everything worth showing for free: model, effort, context, cost, cache, rate limits. The one thing it has no field for is an extra-usage or overage dollar figure — that lives behind a separate Usage API, which is exactly what `ccstatusline` calls to fill the gap. I didn't want the dollar figure badly enough to take on a second data source and its auth, so I kept the script and just added the fields it was missing.
 
 ## rtk, the token saver that briefly lied to me
 
