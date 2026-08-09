@@ -74,12 +74,13 @@ docs_dir: docs
 # Nav Configuration
 nav:
   - Me: index.md
-  - Projects: 
+  - Projects:
       - Projects: projects/index.md
       - DocAid:
         - DocAid: projects/doc-aid/index.md
   - Blog:
     - blog/index.md
+  - Résumé: resume.md
 
 # Attributes addition
 markdown_extensions: 
@@ -108,6 +109,31 @@ extra_css:
 
 # Extra Configuration
 extra:
+  # Homepage compass. Bearings are true compass degrees: 0 = north, clockwise.
+  # Adding, renaming or re-pointing a destination is a change here only —
+  # overrides/home.html loops over this list and never hardcodes a section.
+  # Swap `avatar` for https://github.com/prateek11rai.png to track GitHub
+  # instead of the committed file (costs a third-party request on first paint).
+  compass:
+    avatar: assets/images/avatar.jpg
+    points:
+      - key: me
+        label: Me
+        bearing: 90
+        url: .
+        here: true
+      - key: projects
+        label: Projects
+        bearing: 180
+        url: projects/
+      - key: blog
+        label: Blog
+        bearing: 270
+        url: blog/
+      - key: resume
+        label: Résumé
+        bearing: 0
+        url: resume/
   consent:
     title: Cookie Consent
     description: >-

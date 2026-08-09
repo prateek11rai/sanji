@@ -1,0 +1,382 @@
+/* Homepage only — loaded from overrides/home.html via {% block extrahead %},
+   which renders after extra_css, so these rules win equal-specificity ties
+   against dracula.css. No other page loads this file. */
+
+/* ── page chrome ──────────────────────────────────────────── */
+
+/* The markdown body is relocated into the hero panel, so the empty
+   .md-content wrapper (which base.html emits regardless) is hidden. */
+.md-content {
+  display: none;
+}
+
+.md-main__inner {
+  margin: 0;
+}
+
+/* ── palette ──────────────────────────────────────────────── */
+
+[data-md-color-scheme="dracula-dark"] {
+  --sanji-face-hi: #32354a;
+  --sanji-face-lo: #1c1d27;
+  --sanji-bezel-a: #5b5f78;
+  --sanji-bezel-b: #23242f;
+  --sanji-bezel-c: #7d82a1;
+  --sanji-rose-l: rgba(248, 248, 242, 0.20);
+  --sanji-rose-d: rgba(248, 248, 242, 0.075);
+  --sanji-glass: rgba(255, 255, 255, 0.13);
+  --sanji-ink: #f8f8f2;
+  --sanji-mute: rgba(248, 248, 242, 0.62);
+  --sanji-faint: rgba(248, 248, 242, 0.42);
+  --sanji-rule: #44475a;
+  --sanji-me: #ff79c6;
+  --sanji-projects: #50fa7b;
+  --sanji-blog: #8be9fd;
+  --sanji-resume: #ffb86c;
+}
+
+[data-md-color-scheme="dracula-light"] {
+  --sanji-face-hi: #ffffff;
+  --sanji-face-lo: #dedcd0;
+  --sanji-bezel-a: #b9b7a8;
+  --sanji-bezel-b: #f2f1e8;
+  --sanji-bezel-c: #8d8b7e;
+  --sanji-rose-l: rgba(40, 42, 54, 0.24);
+  --sanji-rose-d: rgba(40, 42, 54, 0.085);
+  --sanji-glass: rgba(255, 255, 255, 0.55);
+  --sanji-ink: #282a36;
+  --sanji-mute: rgba(40, 42, 54, 0.70);
+  --sanji-faint: rgba(40, 42, 54, 0.52);
+  --sanji-rule: #d5d4c8;
+  --sanji-me: #a3144d;
+  --sanji-projects: #14710a;
+  --sanji-blog: #036a96;
+  --sanji-resume: #a34d14;
+}
+
+/* ── hero layout ──────────────────────────────────────────── */
+
+.sanji-hero {
+  padding: 2.2rem 1rem 2.6rem;
+}
+
+.sanji-hero__grid {
+  max-width: 61rem;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 2rem;
+}
+
+@media screen and (max-width: 59.9375em) {
+  .sanji-hero__grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .sanji-hero {
+    padding: 1.2rem 0.8rem 2rem;
+  }
+}
+
+.sanji-hero__stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Ring labels are absolutely positioned and contribute no layout height —
+     reserve it here or north/south collide with whatever stacks around. */
+  padding: 2rem 0;
+}
+
+/* ── the instrument ───────────────────────────────────────── */
+
+.cmp {
+  --cmp-size: 22rem;
+  position: relative;
+  width: var(--cmp-size);
+  height: var(--cmp-size);
+  flex: none;
+  perspective: 1000px;
+}
+
+@media screen and (max-width: 76.1875em) {
+  .cmp { --cmp-size: 19rem; }
+}
+@media screen and (max-width: 59.9375em) {
+  .cmp { --cmp-size: 16.5rem; }
+}
+@media screen and (max-width: 29.9375em) {
+  .cmp { --cmp-size: 14.5rem; }
+}
+
+/* Everything inside tilts together as one solid object. */
+.cmp__tilt {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform:
+    rotateX(var(--cmp-rx, 0deg))
+    rotateY(var(--cmp-ry, 0deg));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cmp__tilt { transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1); }
+}
+
+.cmp__layer {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+/* Dished face: light from above, floor falling away at the rim. */
+.cmp__dish {
+  transform: translateZ(0);
+  background:
+    radial-gradient(circle at 50% 38%,
+      var(--sanji-face-hi) 0%,
+      var(--sanji-face-lo) 78%);
+  box-shadow:
+    inset 0 0.5rem 1.6rem rgba(0, 0, 0, 0.42),
+    inset 0 -0.35rem 1rem rgba(255, 255, 255, 0.05),
+    0 1.1rem 2.2rem rgba(0, 0, 0, 0.35);
+}
+
+/* Rose, ticks and numerals sit just above the floor. */
+.cmp__card {
+  transform: translateZ(6px);
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* The needle floats, and drops a shadow onto the card below it. */
+.cmp__needle {
+  transform: translateZ(16px) rotate(var(--cmp-rot, 90deg));
+  transform-origin: 50% 50%;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.45));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cmp__needle { transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1); }
+}
+
+.cmp__needle svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+/* Raised medallion at the pivot. */
+.cmp__hub {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22.5%;
+  height: 22.5%;
+  translate: -50% -50%;
+  transform: translateZ(24px);
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--cmp-accent, var(--sanji-me));
+  background: var(--sanji-face-lo);
+  box-shadow:
+    0 0.35rem 0.7rem rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cmp__hub { transition: border-color 300ms; }
+}
+
+.cmp__hub img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Machined outer ring, carved out of a conic gradient with a mask. */
+.cmp__bezel {
+  transform: translateZ(30px);
+  background: conic-gradient(
+    from 210deg,
+    var(--sanji-bezel-b) 0deg,
+    var(--sanji-bezel-c) 42deg,
+    var(--sanji-bezel-a) 96deg,
+    var(--sanji-bezel-b) 168deg,
+    var(--sanji-bezel-a) 232deg,
+    var(--sanji-bezel-c) 292deg,
+    var(--sanji-bezel-b) 360deg
+  );
+  /* closest-side is load-bearing: a bare `circle` sizes to farthest-corner,
+     so 100% would be the half-diagonal and the ring would swallow the tick
+     band. closest-side makes 100% the actual radius. */
+  -webkit-mask: radial-gradient(circle closest-side,
+    transparent 0 calc(100% - 0.62rem), #000 calc(100% - 0.62rem));
+  mask: radial-gradient(circle closest-side,
+    transparent 0 calc(100% - 0.62rem), #000 calc(100% - 0.62rem));
+  box-shadow:
+    0 0.5rem 1.2rem rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+
+/* Glass dome. The highlight tracks the pointer, so the whole thing reads as
+   a curved surface catching light rather than a flat disc. */
+.cmp__glass {
+  transform: translateZ(46px);
+  background:
+    radial-gradient(ellipse 58% 42% at var(--cmp-gx, 30%) var(--cmp-gy, 20%),
+      var(--sanji-glass) 0%, transparent 62%);
+  box-shadow: inset 0 0 2.2rem rgba(0, 0, 0, 0.30);
+  pointer-events: none;
+}
+
+/* ── SVG card parts ───────────────────────────────────────── */
+
+.cmp__card .ring { fill: none; stroke: var(--sanji-rule); }
+.cmp__card .tick-min { stroke: var(--sanji-faint); stroke-width: 0.7; }
+.cmp__card .tick-med { stroke: var(--sanji-mute); stroke-width: 1; }
+.cmp__card .tick-maj { stroke: var(--sanji-ink); stroke-width: 1.5; opacity: 0.75; }
+.cmp__card .deg { fill: var(--sanji-faint); font-size: 8px; letter-spacing: 0.06em; }
+.cmp__card .cardinal { fill: var(--sanji-mute); font-size: 13px; font-weight: 800; }
+.cmp__card .petal-l { fill: var(--sanji-rose-l); }
+.cmp__card .petal-d { fill: var(--sanji-rose-d); }
+.cmp__card .petal-l.is-hot { fill: var(--cmp-hot); opacity: 0.30; }
+.cmp__card .petal-d.is-hot { fill: var(--cmp-hot); opacity: 0.14; }
+.cmp__card .lubber { stroke: var(--cmp-accent, var(--sanji-me)); stroke-width: 2; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .cmp__card .petal-l,
+  .cmp__card .petal-d { transition: fill 250ms, opacity 250ms; }
+}
+
+/* A hairline of page colour keeps the needle legible over a lit petal. */
+.cmp__needle .n-hot {
+  fill: var(--cmp-accent, var(--sanji-me));
+  stroke: var(--md-default-bg-color);
+  stroke-width: 1.5;
+}
+.cmp__needle .n-cold {
+  fill: var(--sanji-mute);
+  opacity: 0.55;
+  stroke: var(--md-default-bg-color);
+  stroke-width: 1.5;
+}
+
+/* ── destinations ─────────────────────────────────────────── */
+
+/* Kept outside .cmp__tilt so the type stays flat and crisp. */
+.cmp__dest {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--sanji-mute);
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.1rem;
+  white-space: nowrap;
+  translate: -50% -50%;
+  z-index: 2;
+}
+
+.md-typeset .cmp__dest { color: var(--sanji-mute); }
+
+.cmp__dest-brg {
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+  color: var(--sanji-faint);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+}
+
+.cmp__dest-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+
+.cmp__dest:hover,
+.cmp__dest:focus-visible,
+.cmp__dest.is-hot { color: var(--dest-c); }
+
+.cmp__dest:hover .cmp__dest-brg,
+.cmp__dest.is-hot .cmp__dest-brg { color: var(--dest-c); }
+
+.cmp__dest--here { color: var(--sanji-me); cursor: default; }
+.cmp__dest--here .cmp__dest-name::after {
+  content: " ●";
+  font-size: 0.4rem;
+  vertical-align: middle;
+}
+
+/* ── intro panel ──────────────────────────────────────────── */
+
+.sanji-intro { min-width: 0; }
+
+.md-typeset .sanji-intro h1 {
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.5rem;
+}
+
+.md-typeset .sanji-intro p {
+  color: var(--sanji-mute);
+  max-width: 44ch;
+  line-height: 1.75;
+  margin: 0 0 0.6rem;
+}
+
+@media screen and (max-width: 59.9375em) {
+  .md-typeset .sanji-intro h1 { font-size: 1.5rem; }
+  .md-typeset .sanji-intro p { max-width: none; }
+}
+
+.sanji-elsewhere {
+  margin-top: 1.2rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--sanji-rule);
+}
+
+.sanji-elsewhere__cap {
+  display: block;
+  font-size: 0.5rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sanji-faint);
+  margin-bottom: 0.5rem;
+}
+
+/* Material's own .md-social markup, restyled for the panel. */
+.sanji-elsewhere .md-social {
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.sanji-elsewhere .md-social__link {
+  width: 1.6rem;
+  height: 1.6rem;
+  color: var(--sanji-mute);
+}
+
+.sanji-elsewhere .md-social__link:hover { color: var(--md-accent-fg-color); }
+
+.sanji-elsewhere .md-social__link svg {
+  max-height: 0.9rem;
+  vertical-align: -0.1rem;
+}
+
+.sanji-hero__copyright {
+  max-width: 61rem;
+  margin: 1.8rem auto 0;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--sanji-rule);
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  color: var(--sanji-faint);
+}
+
+.sanji-hero__copyright a { color: inherit; }

@@ -1,64 +1,286 @@
-<!-- Changes Copyright (c) 2025 Prateek Rai -->
-
-<!--
-  Original content:
-  Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
+<!-- Copyright (c) 2025 Prateek Rai -->
 
 {% extends "base.html" %}
 
-{% block htmltitle %}
-  <title>{{ config.site_name }} - {{ config.site_description }}</title>
-{% endblock %}
+{#-
+  Homepage only. Applied via `template: home.html` in docs/index.md.
 
-{% block styles %}
-{{ super() }}
-    <link rel="stylesheet" type="text/css" href="home.css">
+  The hero goes inside {% block tabs %} after {{ super() }} — that block IS the
+  navigation tab bar, so calling super() first is what keeps Me / Projects /
+  Blog / Résumé visible. The footer block is emptied deliberately: the social
+  links now live in the intro panel, and the copyright is re-rendered at the
+  bottom of the hero.
+
+  The intro is `page.content` — the rendered body of docs/index.md — so the
+  homepage copy stays in markdown and stays in the search index.
+-#}
+
+{% block extrahead %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ 'extra/css/home.css' | url }}">
 {% endblock %}
 
 {% block tabs %}
+  {{ super() }}
 
-<section class="mdx-container">
-  <div class="mdx-hero-background">
-    <div class="mdx-hero-overlay">
-      <div class="md-grid md-typeset">
-        <div class="mdx-hero">
-          <div class="mdx-hero__content">
-            <h1>Sanji</h1>
-            <h2>by Prateek Rai</h2>
-            <p>
-              Welcome to my personal corner of the internet! I'm Prateek Rai, and this is where I share my journey through technology, data, and life.
-            </p>
-            <div class="mdx-hero__buttons">
-              <a href="about/" title="Learn more about me" class="md-button md-button--primary">
-                About Me
-              </a>
-              <a href="blog/" title="Read my blog posts" class="md-button md-button--secondary">
-                Blog
-              </a>
+  {#- Bearings, labels and targets come from extra.compass in mkdocs.yml. -#}
+  {% set compass = config.extra.compass %}
+
+  <section class="sanji-hero md-typeset">
+    <div class="sanji-hero__grid">
+
+      <div class="sanji-hero__stage">
+        <div class="cmp" id="cmp" data-points='{{ compass.points | tojson }}'>
+          <div class="cmp__tilt" id="cmp-tilt">
+            <div class="cmp__layer cmp__dish"></div>
+            <svg class="cmp__layer cmp__card" id="cmp-card"
+                 viewBox="0 0 400 400" aria-hidden="true"></svg>
+            <div class="cmp__layer cmp__needle" id="cmp-needle">
+              {#- One magnetised needle on a pivot: a kite each side of centre. -#}
+              <svg viewBox="0 0 400 400">
+                <polygon class="n-cold" points="200,346 189,262 200,200 211,262"/>
+                <polygon class="n-hot"  points="200,54 211,138 200,200 189,138"/>
+              </svg>
             </div>
+            <div class="cmp__hub" id="cmp-hub">
+              <img src="{{ compass.avatar | url }}" alt="{{ config.site_author }}"
+                   width="220" height="220" fetchpriority="high">
+            </div>
+            <div class="cmp__layer cmp__bezel"></div>
+            <div class="cmp__layer cmp__glass"></div>
           </div>
+
+          {#- Real links, outside the 3D context so the type stays crisp.
+              Without JavaScript these are simply four labelled links. -#}
+          {% for p in compass.points %}
+            <a class="cmp__dest {% if p.here %}cmp__dest--here{% endif %}"
+               href="{{ p.url | url }}"
+               data-bearing="{{ p.bearing }}"
+               style="--dest-c: var(--sanji-{{ p.key }})">
+              <span class="cmp__dest-brg">{{ "%03d"|format(p.bearing) }}&deg;</span>
+              <span class="cmp__dest-name">{{ p.label }}</span>
+            </a>
+          {% endfor %}
         </div>
       </div>
-    </div>
-  </div>
-</section>
 
+      <div class="sanji-intro">
+        {{ page.content }}
+        <div class="sanji-elsewhere">
+          <span class="sanji-elsewhere__cap">Elsewhere</span>
+          {% include "partials/social.html" %}
+        </div>
+      </div>
+
+    </div>
+
+    {% if config.copyright %}
+      <div class="sanji-hero__copyright">{{ config.copyright }}</div>
+    {% endif %}
+  </section>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var root   = document.getElementById("cmp");
+      var tilt   = document.getElementById("cmp-tilt");
+      var card   = document.getElementById("cmp-card");
+      var needle = document.getElementById("cmp-needle");
+      var hub    = document.getElementById("cmp-hub");
+      if (!root || !card) return;
+
+      var POINTS = JSON.parse(root.dataset.points);
+      var HOME   = POINTS.filter(function (p) { return p.here; })[0] || POINTS[0];
+      var DESTS  = Array.prototype.slice.call(root.querySelectorAll(".cmp__dest"));
+
+      var C = 200, R_OUT = 196, R_IN = 176, R_NUM = 165, R_CARD = 142, R_ROSE = 128;
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      /* 0 deg = north, increasing clockwise. */
+      function rad(d) { return (d - 90) * Math.PI / 180; }
+      function px(d, r) { return [C + r * Math.cos(rad(d)), C + r * Math.sin(rad(d))]; }
+      function f(n) { return n.toFixed(2); }
+
+      /* ── card: rings, ticks, numerals, cardinals, 16-point rose ── */
+      (function build() {
+        var out = [];
+        out.push('<circle class="ring" cx="200" cy="200" r="' + R_OUT + '" stroke-width="1"/>');
+        out.push('<circle class="ring" cx="200" cy="200" r="' + R_IN  + '" stroke-width="1"/>');
+        out.push('<circle class="ring" cx="200" cy="200" r="' + R_ROSE + '" stroke-width="1"/>');
+
+        for (var d = 0; d < 360; d += 2) {
+          var maj = d % 30 === 0, med = !maj && d % 10 === 0;
+          var len = maj ? 15 : med ? 9 : 5;
+          var cls = maj ? "tick-maj" : med ? "tick-med" : "tick-min";
+          var a = px(d, R_OUT - len), b = px(d, R_OUT - 1);
+          out.push('<line class="' + cls + '" x1="' + f(a[0]) + '" y1="' + f(a[1]) +
+                   '" x2="' + f(b[0]) + '" y2="' + f(b[1]) + '"/>');
+        }
+
+        for (var n = 0; n < 360; n += 30) {
+          var t = px(n, R_NUM);
+          out.push('<text class="deg" x="' + f(t[0]) + '" y="' + f(t[1]) +
+                   '" text-anchor="middle" dominant-baseline="central">' +
+                   ("00" + n).slice(-3) + "</text>");
+        }
+
+        [["N", 0], ["E", 90], ["S", 180], ["W", 270]].forEach(function (c) {
+          var t = px(c[1], R_CARD);
+          out.push('<text class="cardinal" x="' + f(t[0]) + '" y="' + f(t[1]) +
+                   '" text-anchor="middle" dominant-baseline="central">' + c[0] + "</text>");
+        });
+
+        /* Three tiers by tip length. Each petal is two mirrored triangles —
+           shoulder, centre, tip — filled light and dark so it reads solid. */
+        var TIERS = [
+          { step: 90,   tip: 124, shoulder: 48 },
+          { step: 45,   tip: 92,  shoulder: 46 },
+          { step: 22.5, tip: 66,  shoulder: 44 }
+        ];
+        var drawn = {};
+        TIERS.forEach(function (t) {
+          for (var d = 0; d < 360; d += t.step) {
+            var key = d.toFixed(2);
+            if (drawn[key]) continue;
+            drawn[key] = 1;
+            var half = t.step / 2;
+            var tip = px(d, t.tip);
+            var l = px(d - half, t.shoulder);
+            var r = px(d + half, t.shoulder);
+            out.push('<polygon class="petal-l" data-bearing="' + d + '" points="200,200 ' +
+                     f(l[0]) + "," + f(l[1]) + " " + f(tip[0]) + "," + f(tip[1]) + '"/>');
+            out.push('<polygon class="petal-d" data-bearing="' + d + '" points="200,200 ' +
+                     f(r[0]) + "," + f(r[1]) + " " + f(tip[0]) + "," + f(tip[1]) + '"/>');
+          }
+        });
+
+        var l1 = px(0, R_OUT + 3), l2 = px(0, R_OUT + 13);
+        out.push('<line class="lubber" x1="' + f(l1[0]) + '" y1="' + f(l1[1]) +
+                 '" x2="' + f(l2[0]) + '" y2="' + f(l2[1]) + '"/>');
+
+        card.innerHTML = out.join("");
+      })();
+
+      /* ── place the destination labels on the ring ── */
+      function place() {
+        var size = root.clientWidth;
+        if (!size) return;
+        var c = size / 2;
+        var r = (R_OUT + 26) / 400 * size;
+        DESTS.forEach(function (a) {
+          var b = +a.dataset.bearing;
+          a.style.left = (c + r * Math.cos(rad(b))) + "px";
+          a.style.top  = (c + r * Math.sin(rad(b))) + "px";
+        });
+      }
+
+      /* ── state ── */
+      var active = null, locked = false, raf = 0;
+
+      function paint(p) {
+        if (active === p) return;
+        active = p;
+        root.style.setProperty("--cmp-accent", "var(--sanji-" + p.key + ")");
+        DESTS.forEach(function (a) {
+          a.classList.toggle("is-hot", +a.dataset.bearing === p.bearing);
+        });
+        var want = String(p.bearing);
+        card.querySelectorAll(".petal-l, .petal-d").forEach(function (el) {
+          var hot = el.dataset.bearing === want;
+          el.classList.toggle("is-hot", hot);
+          if (hot) el.style.setProperty("--cmp-hot", "var(--sanji-" + p.key + ")");
+        });
+      }
+
+      function point(deg) {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(function () {
+          root.style.setProperty("--cmp-rot", deg + "deg");
+        });
+      }
+
+      function nearest(deg) {
+        var best = HOME, bestD = Infinity;
+        POINTS.forEach(function (p) {
+          var diff = Math.abs((((deg - p.bearing + 180) % 360) + 360) % 360 - 180);
+          if (diff < bestD) { bestD = diff; best = p; }
+        });
+        return best;
+      }
+
+      function home() { locked = false; paint(HOME); point(HOME.bearing); }
+
+      /* ── pointer: swing the needle, tilt the instrument, move the glare ── */
+      var hero = root.closest(".sanji-hero");
+
+      hero.addEventListener("pointermove", function (e) {
+        if (e.pointerType !== "mouse") return;
+        var b = root.getBoundingClientRect();
+        var dx = e.clientX - (b.left + b.width / 2);
+        var dy = e.clientY - (b.top + b.height / 2);
+
+        if (!reduce) {
+          var nx = Math.max(-1, Math.min(1, dx / (b.width * 1.1)));
+          var ny = Math.max(-1, Math.min(1, dy / (b.height * 1.1)));
+          tilt.style.setProperty("--cmp-ry", (nx * 8).toFixed(2) + "deg");
+          tilt.style.setProperty("--cmp-rx", (-ny * 8).toFixed(2) + "deg");
+          root.style.setProperty("--cmp-gx", (32 + nx * 26).toFixed(1) + "%");
+          root.style.setProperty("--cmp-gy", (22 + ny * 22).toFixed(1) + "%");
+        }
+
+        if (locked || Math.hypot(dx, dy) < 14) return;
+        var deg = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+        point(deg);
+        paint(nearest(deg));
+      });
+
+      hero.addEventListener("pointerleave", function () {
+        tilt.style.setProperty("--cmp-ry", "0deg");
+        tilt.style.setProperty("--cmp-rx", "0deg");
+        root.style.setProperty("--cmp-gx", "30%");
+        root.style.setProperty("--cmp-gy", "20%");
+        home();
+      });
+
+      /* ── per-destination hover, focus and touch ── */
+      DESTS.forEach(function (a) {
+        var p = POINTS.filter(function (x) { return x.bearing === +a.dataset.bearing; })[0];
+        if (!p) return;
+        a.addEventListener("pointerenter", function (e) {
+          if (e.pointerType === "mouse") { locked = true; paint(p); point(p.bearing); }
+        });
+        a.addEventListener("pointerleave", function (e) {
+          if (e.pointerType === "mouse") locked = false;
+        });
+        a.addEventListener("focus", function () { locked = true; paint(p); point(p.bearing); });
+        a.addEventListener("blur", function () { locked = false; });
+        /* Touch: first tap swings the needle, second follows the link. */
+        a.addEventListener("click", function (ev) {
+          if (p.here) { ev.preventDefault(); return; }
+          if (matchMedia("(hover: none)").matches && active !== p) {
+            ev.preventDefault();
+            locked = true;
+            paint(p);
+            point(p.bearing);
+          }
+        });
+      });
+
+      window.addEventListener("resize", place);
+      if (hub && hub.querySelector("img")) {
+        hub.querySelector("img").addEventListener("load", place);
+      }
+      place();
+      home();
+    })();
+  </script>
 {% endblock %}
+
+{#- The markdown body is rendered inside the hero, so the default slot is
+    emptied and .md-content is hidden in home.css. -#}
 {% block content %}{% endblock %}
+
+{#- No site footer on the homepage: socials moved into the intro panel and
+    the copyright is re-rendered at the foot of the hero. -#}
 {% block footer %}{% endblock %}

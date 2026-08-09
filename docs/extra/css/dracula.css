@@ -69,8 +69,10 @@
   --md-primary-bg-color: #f8f8f2;
   --md-primary-bg-color--light: #f8f8f280;
 
-  --md-accent-fg-color: #c0448b;
-  --md-accent-fg-color--transparent: #c0448b1a;
+  /* Alucard accent. The previous #c0448b measured 4.44:1 on #f8f8f2 — just
+     under AA. This is 7.13:1. */
+  --md-accent-fg-color: #a3144d;
+  --md-accent-fg-color--transparent: #a3144d1a;
   --md-accent-bg-color: #ffffff;
   --md-accent-bg-color--light: #ffffff80;
 
@@ -84,22 +86,26 @@
   --md-default-bg-color--lightest: #eae9e133;
 
   --md-typeset-color: #282a36;
-  --md-typeset-a-color: #00b3cc;
+  /* Was #00b3cc — 2.37:1 on #f8f8f2, which fails AA and even the 3:1
+     large-text floor. Alucard cyan is 5.62:1. */
+  --md-typeset-a-color: #036a96;
   --md-typeset-mark-color: #f1fa8c80;
 
   --md-code-fg-color: #282a36;
   --md-code-bg-color: #eae9e1;
   --md-code-hl-color: #eae9e166;
-  --md-code-hl-number-color: #9266c2;
-  --md-code-hl-special-color: #c0448b;
-  --md-code-hl-function-color: #469b46;
-  --md-code-hl-constant-color: #b36200;
-  --md-code-hl-keyword-color: #c0448b;
-  --md-code-hl-string-color: #b8860b;
+  /* Syntax colours from Dracula's official light theme, Alucard — a ground-up
+     rework for contrast rather than a naive inversion of the dark set. */
+  --md-code-hl-number-color: #644ac9;
+  --md-code-hl-special-color: #a3144d;
+  --md-code-hl-function-color: #14710a;
+  --md-code-hl-constant-color: #a34d14;
+  --md-code-hl-keyword-color: #a3144d;
+  --md-code-hl-string-color: #846e15;
   --md-code-hl-name-color: #282a36;
-  --md-code-hl-operator-color: #c0448b;
+  --md-code-hl-operator-color: #a3144d;
   --md-code-hl-punctuation-color: #282a36;
-  --md-code-hl-comment-color: #7e8a9c;
+  --md-code-hl-comment-color: #6c664b;
   --md-code-hl-generic-color: #282a36;
   --md-code-hl-variable-color: #282a36;
 
@@ -169,8 +175,21 @@
   margin-left: 0.3em;
 }
 
+/* Filled accents need dark text, not white: every Dracula accent is
+   high-lightness, and #fff on #ff79c6 measures 2.24:1. */
 .md-typeset .report-pill:hover {
   background: var(--md-accent-fg-color);
-  color: #ffffff !important;
+  color: var(--md-default-bg-color) !important;
   border-color: var(--md-accent-fg-color);
+}
+
+/* ── Elevation ────────────────────────────────────────────── */
+
+/* Material defines --md-shadow-z* once in :root with light-mode values, so
+   without these the dark scheme renders light-mode shadows. */
+
+[data-md-color-scheme="dracula-dark"] {
+  --md-shadow-z1: 0 0.2rem 0.5rem #0006, 0 0 0.05rem #0009;
+  --md-shadow-z2: 0 0.2rem 0.5rem #0009, 0 0 0.05rem #000c;
+  --md-shadow-z3: 0 0.2rem 0.75rem #000c, 0 0 0.05rem #000f;
 }
