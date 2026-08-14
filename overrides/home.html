@@ -1,64 +1,216 @@
-<!-- Changes Copyright (c) 2025 Prateek Rai -->
-
-<!--
-  Original content:
-  Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to
-  deal in the Software without restriction, including without limitation the
-  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-  sell copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-  IN THE SOFTWARE.
--->
+<!-- Copyright (c) 2025 Prateek Rai -->
 
 {% extends "base.html" %}
 
-{% block htmltitle %}
-  <title>{{ config.site_name }} - {{ config.site_description }}</title>
+{#-
+  Homepage only, via `template: home.html` in docs/index.md.
+
+  {% block tabs %} IS the nav bar, so super() has to come first — that keeps
+  Material's real header, search and repo link; home.css only restyles them.
+  The footer block is emptied, so the hero re-renders socials and copyright.
+-#}
+
+{#- Same walk as partials/tabs-item.html, so this list and the tab bar can
+    never disagree about where a section points. -#}
+{% macro way(nav_item, ref) %}
+  {%- set ref = ref or nav_item -%}
+  {%- if nav_item.children -%}
+    {{ way(nav_item.children | first, ref) }}
+  {%- elif ref.active -%}
+    <span class="sanji-way sanji-way--here" aria-current="page">{{ ref.title }}</span>
+  {%- else -%}
+    <a class="sanji-way" href="{{ nav_item.url | url }}">{{ ref.title }}</a>
+  {%- endif -%}
+{% endmacro %}
+
+{#- The theme's fonts block requests only 300/400/700. This swaps in the
+    variable file for its full 100–800 axis — same family, one request, this
+    page only. Assumes a variable release, which JetBrains Mono has. -#}
+{% block fonts %}
+  {% if config.theme.font != false %}
+    {% set text = config.theme.font.text | d("Roboto", true) %}
+    {% set code = config.theme.font.code | d("Roboto Mono", true) %}
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family={{
+        text | replace(' ', '+') + ':ital,wght@0,100..800;1,100..800'
+      }}&display=fallback">
+    <style>:root{--md-text-font:"{{ text }}";--md-code-font:"{{ code }}"}</style>
+  {% endif %}
 {% endblock %}
 
-{% block styles %}
-{{ super() }}
-    <link rel="stylesheet" type="text/css" href="home.css">
+{% block extrahead %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ 'extra/css/home.css' | url }}">
+
+  {#- Backdrop, if configured. Emitted after home.css so it wins. CSS rather
+      than <picture> because the layer it paints is a background, and
+      image-set() gives format and DPR switching in one declaration. -#}
+  {% set bd = config.extra.home.backdrop %}
+  {% if bd and bd.wide %}
+    <style>
+      .sanji-art{background-image:image-set(
+        url("{{ bd.wide | url }}") type("image/avif"){% if bd.wide_fallback %},
+        url("{{ bd.wide_fallback | url }}") type("image/webp"){% endif %})}
+      {% if bd.narrow %}
+      @media screen and (max-width:60em){
+        .sanji-art{background-image:image-set(
+          url("{{ bd.narrow | url }}") type("image/avif"){% if bd.narrow_fallback %},
+          url("{{ bd.narrow_fallback | url }}") type("image/webp"){% endif %})}
+      }
+      {% endif %}
+      {% if bd.position %}.sanji-art{--sanji-art-pos:{{ bd.position }}}{% endif %}
+      {% if bd.dim %}[data-md-color-scheme="dracula-dark"]{--sanji-art-dim:{{ bd.dim }}}{% endif %}
+    </style>
+  {% endif %}
 {% endblock %}
 
 {% block tabs %}
+  {{ super() }}
 
-<section class="mdx-container">
-  <div class="mdx-hero-background">
-    <div class="mdx-hero-overlay">
-      <div class="md-grid md-typeset">
-        <div class="mdx-hero">
-          <div class="mdx-hero__content">
-            <h1>Sanji</h1>
-            <h2>by Prateek Rai</h2>
-            <p>
-              Welcome to my personal corner of the internet! I'm Prateek Rai, and this is where I share my journey through technology, data, and life.
-            </p>
-            <div class="mdx-hero__buttons">
-              <a href="about/" title="Learn more about me" class="md-button md-button--primary">
-                About Me
-              </a>
-              <a href="blog/" title="Read my blog posts" class="md-button md-button--secondary">
-                Blog
-              </a>
-            </div>
-          </div>
+  <section class="sanji-hero{% if config.extra.home.backdrop %} sanji-hero--art{% endif %}">
+    {#- Painted sky: a gradient plus a canvas for stars and cloud banks. A
+        configured backdrop replaces it. -#}
+    <div class="sanji-sky" aria-hidden="true"></div>
+    <div class="sanji-art" aria-hidden="true"></div>
+    <canvas class="sanji-stars" id="sanji-stars" aria-hidden="true"></canvas>
+
+    {#- The card does the legibility work, so the backdrop behind it never
+        needs a scrim of its own. -#}
+    <div class="sanji-card md-typeset">
+      <img class="sanji-card__portrait"
+           src="{{ config.extra.home.avatar | url }}"
+           alt="{{ config.site_author }}"
+           width="480" height="480"
+           fetchpriority="high" decoding="async">
+
+      <div class="sanji-card__body">
+        {#- All of docs/index.md. Arranged here, never restated. -#}
+        {{ page.content }}
+
+        <div class="sanji-elsewhere">
+          {% include "partials/social.html" %}
         </div>
+
+        <nav class="sanji-card__ways" aria-label="Sections">
+          {% for nav_item in nav %}{{ way(nav_item) }}{% endfor %}
+        </nav>
       </div>
     </div>
-  </div>
-</section>
 
+    {#- The footer's own partial, so this page carries the Material
+        attribution and honours extra.generator like every other page. -#}
+    <div class="sanji-hero__copyright">
+      {% include "partials/copyright.html" %}
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var canvas = document.getElementById("sanji-stars");
+      if (!canvas || !canvas.getContext) return;
+
+      var ctx  = canvas.getContext("2d");
+      var root = document.body;
+      var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      var stars = [], clouds = [], w = 0, h = 0, raf = 0, t = 0;
+      var starCol = "#f8f8f2", starOn = 0, cloudCol = "255,255,255";
+
+      /* Reading custom properties forces a style flush — never in the loop. */
+      function readTokens() {
+        var cs = getComputedStyle(root);
+        starCol  = (cs.getPropertyValue("--sanji-star") || "#f8f8f2").trim();
+        starOn   = parseFloat(cs.getPropertyValue("--sanji-star-a")) || 0;
+        cloudCol = (cs.getPropertyValue("--sanji-cloud") || "255,255,255").trim();
+      }
+
+      function seed() {
+        stars = [];
+        var n = Math.min(420, Math.round((w * h) / 5200));
+        for (var i = 0; i < n; i++) {
+          stars.push({
+            x: Math.random() * w,
+            /* Thinned toward the horizon so the sky reads as depth. */
+            y: Math.pow(Math.random(), 1.7) * h * 0.72,
+            r: Math.random() * 1.1 + 0.25,
+            a: Math.random() * 0.6 + 0.25,
+            p: Math.random() * Math.PI * 2
+          });
+        }
+        clouds = [];
+        for (var j = 0; j < 6; j++) {
+          clouds.push({
+            x: Math.random() * w,
+            y: h * (0.30 + Math.random() * 0.36),
+            rx: w * (0.16 + Math.random() * 0.20),
+            ry: h * (0.05 + Math.random() * 0.07),
+            a: 0.05 + Math.random() * 0.07,
+            v: (Math.random() * 0.45 + 0.12) * (Math.random() < 0.5 ? -1 : 1)
+          });
+        }
+      }
+
+      function size() {
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        w = canvas.clientWidth;
+        h = canvas.clientHeight;
+        if (!w || !h) return;
+        canvas.width  = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        seed();
+      }
+
+      function paint() {
+        if (!w || !h) return;
+        ctx.clearRect(0, 0, w, h);
+
+        for (var j = 0; j < clouds.length; j++) {
+          var c = clouds[j];
+          var cx = ((c.x + t * c.v) % (w + c.rx * 2)) - c.rx;
+          var g = ctx.createRadialGradient(cx, c.y, 0, cx, c.y, c.rx);
+          g.addColorStop(0, "rgba(" + cloudCol + "," + c.a + ")");
+          g.addColorStop(1, "rgba(" + cloudCol + ",0)");
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.ellipse(cx, c.y, c.rx, c.ry, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        if (starOn > 0) {
+          ctx.fillStyle = starCol;
+          for (var i = 0; i < stars.length; i++) {
+            var s = stars[i];
+            var tw = still ? 1 : 0.72 + Math.sin(t * 0.018 + s.p) * 0.28;
+            ctx.globalAlpha = s.a * tw * starOn;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+        }
+      }
+
+      function loop() { t += 1; paint(); raf = requestAnimationFrame(loop); }
+      function start() { cancelAnimationFrame(raf); if (still) { paint(); } else { raf = requestAnimationFrame(loop); } }
+
+      window.addEventListener("resize", function () { size(); readTokens(); start(); });
+
+      /* Repaint if the scheme attribute ever changes. */
+      new MutationObserver(function () { readTokens(); paint(); })
+        .observe(root, { attributes: true, attributeFilter: ["data-md-color-scheme"] });
+
+      size();
+      readTokens();
+      start();
+    })();
+  </script>
 {% endblock %}
+
+{#- Body is rendered in the hero; .md-content is hidden in home.css. -#}
 {% block content %}{% endblock %}
+
+{#- Socials and copyright above replace it. -#}
 {% block footer %}{% endblock %}

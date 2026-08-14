@@ -43,7 +43,12 @@
   --md-code-hl-name-color: #f8f8f2;
   --md-code-hl-operator-color: #ff79c6;
   --md-code-hl-punctuation-color: #f8f8f2;
-  --md-code-hl-comment-color: #6272a4;
+  /* Dracula's canonical Comment is #6272a4, which measures 3.51:1 on the code
+     background and 3.03:1 on the page — both under AA for text, and comments
+     are text. Same hue (225.5) and saturation (0.27), lifted until it clears
+     on both: 5.56:1 and 4.80:1. Still the most recessive token in the set, so
+     comments stay visibly secondary to code. */
+  --md-code-hl-comment-color: #8995ba;
   --md-code-hl-generic-color: #f8f8f2;
   --md-code-hl-variable-color: #f8f8f2;
 
@@ -57,62 +62,6 @@
 
   --md-typeset-table-color: #44475a;
   --md-typeset-table-color--light: #44475a40;
-}
-
-/* ── Light Scheme ────────────────────────────────────────── */
-
-[data-md-color-scheme="dracula-light"] {
-  /* Primary = dark header on light page (GitHub-style) */
-  --md-primary-fg-color: #282a36;
-  --md-primary-fg-color--light: #3a3c4a;
-  --md-primary-fg-color--dark: #1d1e2b;
-  --md-primary-bg-color: #f8f8f2;
-  --md-primary-bg-color--light: #f8f8f280;
-
-  --md-accent-fg-color: #c0448b;
-  --md-accent-fg-color--transparent: #c0448b1a;
-  --md-accent-bg-color: #ffffff;
-  --md-accent-bg-color--light: #ffffff80;
-
-  --md-default-fg-color: #282a36;
-  --md-default-fg-color--light: #282a36cc;
-  --md-default-fg-color--lighter: #282a3666;
-  --md-default-fg-color--lightest: #282a361a;
-  --md-default-bg-color: #f8f8f2;
-  --md-default-bg-color--light: #ffffff;
-  --md-default-bg-color--lighter: #eae9e1;
-  --md-default-bg-color--lightest: #eae9e133;
-
-  --md-typeset-color: #282a36;
-  --md-typeset-a-color: #00b3cc;
-  --md-typeset-mark-color: #f1fa8c80;
-
-  --md-code-fg-color: #282a36;
-  --md-code-bg-color: #eae9e1;
-  --md-code-hl-color: #eae9e166;
-  --md-code-hl-number-color: #9266c2;
-  --md-code-hl-special-color: #c0448b;
-  --md-code-hl-function-color: #469b46;
-  --md-code-hl-constant-color: #b36200;
-  --md-code-hl-keyword-color: #c0448b;
-  --md-code-hl-string-color: #b8860b;
-  --md-code-hl-name-color: #282a36;
-  --md-code-hl-operator-color: #c0448b;
-  --md-code-hl-punctuation-color: #282a36;
-  --md-code-hl-comment-color: #7e8a9c;
-  --md-code-hl-generic-color: #282a36;
-  --md-code-hl-variable-color: #282a36;
-
-  --md-admonition-fg-color: #282a36;
-  --md-admonition-bg-color: #f8f8f2;
-
-  --md-footer-fg-color: #f8f8f2;
-  --md-footer-fg-color--light: #f8f8f280;
-  --md-footer-bg-color: #282a36;
-  --md-footer-bg-color--dark: #1d1e2b;
-
-  --md-typeset-table-color: #eae9e1;
-  --md-typeset-table-color--light: #eae9e140;
 }
 
 /* ── Tab Navigation (both schemes) ──────────────────────── */
@@ -169,8 +118,21 @@
   margin-left: 0.3em;
 }
 
+/* Filled accents need dark text, not white: every Dracula accent is
+   high-lightness, and #fff on #ff79c6 measures 2.24:1. */
 .md-typeset .report-pill:hover {
   background: var(--md-accent-fg-color);
-  color: #ffffff !important;
+  color: var(--md-default-bg-color) !important;
   border-color: var(--md-accent-fg-color);
+}
+
+/* ── Elevation ────────────────────────────────────────────── */
+
+/* Material defines --md-shadow-z* once in :root with light-mode values, so
+   without these the dark scheme renders light-mode shadows. */
+
+[data-md-color-scheme="dracula-dark"] {
+  --md-shadow-z1: 0 0.2rem 0.5rem #0006, 0 0 0.05rem #0009;
+  --md-shadow-z2: 0 0.2rem 0.5rem #0009, 0 0 0.05rem #000c;
+  --md-shadow-z3: 0 0.2rem 0.75rem #000c, 0 0 0.05rem #000f;
 }

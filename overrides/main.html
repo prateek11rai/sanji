@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
-{% block fonts %}
-  {{ super() }}
-  <link rel="stylesheet" id="contentberg-gfonts-custom-css" href="https://fonts.googleapis.com/css?family=Avenir+Roman%3A400%7CAvenir+Roman%3A600%7CAvenir+Roman%3A700" type="text/css" media="all">
-{% endblock %}
+{#-
+  Site-wide overrides.
+
+  The previous {% block fonts %} override loaded "Avenir Roman" from Google
+  Fonts on every page. Google Fonts does not host Avenir — the request returned
+  HTTP 400 — and nothing on the site used it. The theme's own JetBrains Mono
+  configuration is left to load normally.
+-#}

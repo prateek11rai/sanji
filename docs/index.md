@@ -1,38 +1,20 @@
 ---
-# template: home.html FIXME: Have a better page layout, if time allows ?
+template: home.html
 title: Sanji
 hide:
+  - navigation
+  - toc
   - feedback
 social:
   cards_layout_options:
-    title: Sanji by Prateek Rai
+    # The card already prints "Sanji" as the site name above this line, and the
+    # description carries the name — so this says what the site is instead of
+    # repeating either.
+    title: Projects, writing, rants.
 ---
 
-<!-- TODO: Make this avatar circular : while keeping it elegent -->
-![Prateek Rai](https://github.com/prateek11rai.png){ loading=lazy align=left }
+Hi!
 
-# Hi!
+# I am Prateek.
 
-I am Prateek. Part-time techie and full-time football/soccer fan. I created this site[^1] to document my projects[^2] and thoughts[^3]. I occasionally read too. Favourite writer: [Yukio Mishima](https://en.wikipedia.org/wiki/Yukio_Mishima).
-
-[^1]: Why call it [Sanji](./blog/posts/sanji.md)?
-[^2]: Visit [projects](./projects/index.md).
-[^3]: Visit [blog](./blog/index.md).
-
-<!-- <div class="grid cards" markdown>
-
-- :computer: [Projects](/docs/projects/index.md)
-- :writing_hand: [Blog](/docs/blog/index.md)
-
-</div> -->
-
-[:logos-linkedin:](https://www.linkedin.com/in/prateek11rai)
-[:simple-github:](https://github.com/prateek11rai)
-[:simple-goodreads:](https://www.goodreads.com/user/show/186922946-prateek-rai)
-[:simple-strava:](https://www.strava.com/athletes/prateek11rai)
-[:logos-myanimelist:](https://myanimelist.net/animelist/prateek11rai)
-
-<!-- [:simple-instagram:](https://instagram.com/prateek11rai) -->
-<!-- [:simple-x:](https://x.com/prateek11rai) -->
-<!-- [:simple-youtube:](https://www.youtube.com/@prateek11rai) -->
-<!-- [:simple-facebook:](https://www.facebook.com/prateek11rai) -->
+Engineer, whichever part of the stack needs one. Off the clock: football and anime, neither of them casually. This site is where my [projects](./projects/index.md) and [thoughts](./blog/index.md) go, plus [why it's named after a cook](./blog/posts/sanji.md). I read outside anime too; favourite writer: [Yukio Mishima](https://en.wikipedia.org/wiki/Yukio_Mishima).
