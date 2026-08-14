@@ -96,6 +96,14 @@ scripts/         build-time tooling
 .github/         workflows and README assets
 ```
 
+## Credits
+
+The homepage backdrop is by [**jrmnt**](https://wallhaven.cc/user/jrmnt), via
+[Wallhaven](https://wallhaven.cc/). The source file is kept in this repo under
+`docs/assets/images/home/`; the crops the site serves are derived from it.
+
+---
+
 <details>
 <summary><strong>First-time machine setup (macOS)</strong></summary>
 
