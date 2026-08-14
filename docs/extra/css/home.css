@@ -1,382 +1,424 @@
-/* Homepage only — loaded from overrides/home.html via {% block extrahead %},
-   which renders after extra_css, so these rules win equal-specificity ties
-   against dracula.css. No other page loads this file. */
+/* Homepage only. Loaded from {% block extrahead %} in overrides/home.html and
+   never from extra_css, which is global — .md-content below would blank every
+   other page. */
 
-/* ── page chrome ──────────────────────────────────────────── */
-
-/* The markdown body is relocated into the hero panel, so the empty
-   .md-content wrapper (which base.html emits regardless) is hidden. */
-.md-content {
-  display: none;
-}
-
-.md-main__inner {
-  margin: 0;
-}
-
-/* ── palette ──────────────────────────────────────────────── */
+/* ── tokens ───────────────────────────────────────────────────────────────
+   The painted sky is the fallback when no backdrop is configured. Its end
+   stops match the header and page colours exactly, so there is no seam. */
 
 [data-md-color-scheme="dracula-dark"] {
-  --sanji-face-hi: #32354a;
-  --sanji-face-lo: #1c1d27;
-  --sanji-bezel-a: #5b5f78;
-  --sanji-bezel-b: #23242f;
-  --sanji-bezel-c: #7d82a1;
-  --sanji-rose-l: rgba(248, 248, 242, 0.20);
-  --sanji-rose-d: rgba(248, 248, 242, 0.075);
-  --sanji-glass: rgba(255, 255, 255, 0.13);
-  --sanji-ink: #f8f8f2;
-  --sanji-mute: rgba(248, 248, 242, 0.62);
-  --sanji-faint: rgba(248, 248, 242, 0.42);
-  --sanji-rule: #44475a;
-  --sanji-me: #ff79c6;
-  --sanji-projects: #50fa7b;
-  --sanji-blog: #8be9fd;
-  --sanji-resume: #ffb86c;
+  --sanji-sky-1:#21222c;   /* == header  */
+  --sanji-sky-2:#1e2033;
+  --sanji-sky-3:#2b2545;
+  --sanji-sky-4:#3a2c48;
+  --sanji-sky-5:#2f2b3c;
+  --sanji-sky-6:#282a36;   /* == page bg */
+  --sanji-star:#f8f8f2;
+  --sanji-star-a:1;
+  --sanji-cloud:255,255,255;
+
+  /* Translucent enough to read as glass over the backdrop, opaque enough that
+     body copy still clears AA against it. Tuned together with --sanji-art-dim
+     below: the wash over the image is what makes this safe over any wallpaper. */
+  --sanji-card-bg:rgb(33 34 44 / 62%);
+  --sanji-card-edge:rgb(248 248 242 / 14%);
+  --sanji-card-shadow:0 2rem 4rem -1.6rem rgb(0 0 0 / 75%);
+
+  /* How hard the backdrop image is knocked back. Raise it for a bright or busy
+     wallpaper, drop it for one that is already dark. */
+  --sanji-art-dim:62%;
 }
 
-[data-md-color-scheme="dracula-light"] {
-  --sanji-face-hi: #ffffff;
-  --sanji-face-lo: #dedcd0;
-  --sanji-bezel-a: #b9b7a8;
-  --sanji-bezel-b: #f2f1e8;
-  --sanji-bezel-c: #8d8b7e;
-  --sanji-rose-l: rgba(40, 42, 54, 0.24);
-  --sanji-rose-d: rgba(40, 42, 54, 0.085);
-  --sanji-glass: rgba(255, 255, 255, 0.55);
-  --sanji-ink: #282a36;
-  --sanji-mute: rgba(40, 42, 54, 0.70);
-  --sanji-faint: rgba(40, 42, 54, 0.52);
-  --sanji-rule: #d5d4c8;
-  --sanji-me: #a3144d;
-  --sanji-projects: #14710a;
-  --sanji-blog: #036a96;
-  --sanji-resume: #a34d14;
+
+/* ── chrome ───────────────────────────────────────────────────────────────
+   Fixed and transparent so the backdrop runs behind it. Legibility comes from
+   the scrim on .sanji-hero::before, not from a bar. */
+
+.md-header,
+.md-tabs {
+  position: fixed;
+  background: transparent;
+  box-shadow: none;
+}
+.md-header { top: 0; }
+.md-tabs { top: 2.4rem; }
+.md-header--shadow { box-shadow: none; }
+
+/* dracula.css dims tabs to 0.7, which is 4.44:1 over the brightest sky. 0.88
+   gives 5.90:1 and lets the scrim stay light. */
+.md-tabs__link { opacity: .88; }
+
+/* Left as plain text, same weight as the nav above it. */
+.md-header__source {
+  background: none;
+  box-shadow: none;
+  padding-inline: 0;
 }
 
-/* ── hero layout ──────────────────────────────────────────── */
+/* Keeps the theme's dark wash rather than a light glass pill, which read as a
+   slab. Blur is the only addition. */
+.md-search__form {
+  background: rgb(13 14 22 / 32%);
+  border-radius: .1rem;
+  box-shadow: none;
+  backdrop-filter: blur(10px) saturate(1.1);
+  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+  transition: background-color .25s;
+}
+.md-search__form:hover {
+  background: rgb(13 14 22 / 46%);
+}
 
+/* `hide: navigation` empties the drawer on this page, so the hamburger would
+   open nothing. Below 76.234375em the card carries the sections instead. */
+.md-header__button[for="__drawer"] { display: none; }
+
+/* Material swaps the logo for the hamburger below this width; with the
+   hamburger hidden the bar had no mark at all on a phone. */
+@media screen and (max-width: 76.234375em) {
+  .md-header__button.md-logo { display: inline-flex; }
+}
+
+/* .md-main__inner carries margin-top:1.5rem plus flex-grow; left alone the
+   empty <main> puts a scrollbar under a full-height hero. */
+.md-content { display: none; }
+.md-main { flex-grow: 0; }
+.md-main__inner { margin: 0; height: 0; }
+
+/* ── the stage ───────────────────────────────────────────────────────────── */
+
+/* Symmetric vertical padding of at least the chrome height puts the card in
+   the true centre of the screen, not the centre of what is left under the bar. */
 .sanji-hero {
-  padding: 2.2rem 1rem 2.6rem;
-}
-
-.sanji-hero__grid {
-  max-width: 61rem;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: minmax(0, 1.04fr) minmax(0, 1fr);
-  align-items: center;
-  gap: 2rem;
-}
-
-@media screen and (max-width: 59.9375em) {
-  .sanji-hero__grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  .sanji-hero {
-    padding: 1.2rem 0.8rem 2rem;
-  }
-}
-
-.sanji-hero__stage {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* Ring labels are absolutely positioned and contribute no layout height —
-     reserve it here or north/south collide with whatever stacks around. */
-  padding: 2rem 0;
-}
-
-/* ── the instrument ───────────────────────────────────────── */
-
-.cmp {
-  --cmp-size: 22rem;
+  --sanji-chrome: 2.4rem;                /* header only */
   position: relative;
-  width: var(--cmp-size);
-  height: var(--cmp-size);
-  flex: none;
-  perspective: 1000px;
-}
-
-@media screen and (max-width: 76.1875em) {
-  .cmp { --cmp-size: 19rem; }
-}
-@media screen and (max-width: 59.9375em) {
-  .cmp { --cmp-size: 16.5rem; }
-}
-@media screen and (max-width: 29.9375em) {
-  .cmp { --cmp-size: 14.5rem; }
-}
-
-/* Everything inside tilts together as one solid object. */
-.cmp__tilt {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  transform:
-    rotateX(var(--cmp-rx, 0deg))
-    rotateY(var(--cmp-ry, 0deg));
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .cmp__tilt { transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1); }
-}
-
-.cmp__layer {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-}
-
-/* Dished face: light from above, floor falling away at the rim. */
-.cmp__dish {
-  transform: translateZ(0);
-  background:
-    radial-gradient(circle at 50% 38%,
-      var(--sanji-face-hi) 0%,
-      var(--sanji-face-lo) 78%);
-  box-shadow:
-    inset 0 0.5rem 1.6rem rgba(0, 0, 0, 0.42),
-    inset 0 -0.35rem 1rem rgba(255, 255, 255, 0.05),
-    0 1.1rem 2.2rem rgba(0, 0, 0, 0.35);
-}
-
-/* Rose, ticks and numerals sit just above the floor. */
-.cmp__card {
-  transform: translateZ(6px);
-  width: 100%;
-  height: 100%;
-  display: block;
-  overflow: visible;
-}
-
-/* The needle floats, and drops a shadow onto the card below it. */
-.cmp__needle {
-  transform: translateZ(16px) rotate(var(--cmp-rot, 90deg));
-  transform-origin: 50% 50%;
-  pointer-events: none;
-  filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.45));
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .cmp__needle { transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1); }
-}
-
-.cmp__needle svg { width: 100%; height: 100%; display: block; overflow: visible; }
-
-/* Raised medallion at the pivot. */
-.cmp__hub {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 22.5%;
-  height: 22.5%;
-  translate: -50% -50%;
-  transform: translateZ(24px);
-  border-radius: 50%;
+  isolation: isolate;
   overflow: hidden;
-  border: 2px solid var(--cmp-accent, var(--sanji-me));
-  background: var(--sanji-face-lo);
-  box-shadow:
-    0 0.35rem 0.7rem rgba(0, 0, 0, 0.5),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  flex: none;                            /* .md-container is a flex column */
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: calc(var(--sanji-chrome) + 1rem) clamp(1rem, 4vw, 2rem);
+
+  /* Flex, not grid. With a single auto-sized row, grid centring depends on
+     align-content resolving against a stretched track, and it was landing the
+     card low. Flex has no track to size — one item, centred, done. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .cmp__hub { transition: border-color 300ms; }
+@media screen and (min-width: 76.25em) {
+  .sanji-hero { --sanji-chrome: 4.8rem; } /* header + tabs */
 }
 
-.cmp__hub img {
+/* The cloud reaches the top of the frame: light ink there is 2.6:1 even after
+   the 40% wash. 55% takes it to 7.9:1, and fades out before the card. */
+.sanji-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 34%;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgb(13 14 22 / 55%) 0%,
+    rgb(13 14 22 / 34%) 42%,
+    rgb(13 14 22 / 0%) 100%);
+}
+
+.sanji-sky {
+  position: absolute;
+  inset: 0;
+  z-index: -4;
+  background: linear-gradient(
+    to bottom,
+    var(--sanji-sky-1) 0%,  var(--sanji-sky-2) 18%, var(--sanji-sky-3) 40%,
+    var(--sanji-sky-4) 60%, var(--sanji-sky-5) 82%, var(--sanji-sky-6) 100%);
+}
+
+/* Backdrop layer. Dormant until extra.home.backdrop is set — home.html emits
+ * the --sanji-art values, this only knows how to place them. */
+.sanji-art {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  background-image: var(--sanji-art, none);
+  background-size: cover;
+  background-position: var(--sanji-art-pos, 50% 50%);
+  background-repeat: no-repeat;
+}
+
+/* Keeps a bright patch behind the translucent card from dragging body copy
+   under 4.5:1. */
+.sanji-hero--art .sanji-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--sanji-sky-1) var(--sanji-art-dim), transparent),
+    color-mix(in srgb, #0d0e16 var(--sanji-art-dim), transparent) 55%,
+    color-mix(in srgb, var(--sanji-sky-6) calc(var(--sanji-art-dim) + 22%), transparent));
+}
+
+.sanji-stars {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  display: block;
 }
 
-/* Machined outer ring, carved out of a conic gradient with a mask. */
-.cmp__bezel {
-  transform: translateZ(30px);
-  background: conic-gradient(
-    from 210deg,
-    var(--sanji-bezel-b) 0deg,
-    var(--sanji-bezel-c) 42deg,
-    var(--sanji-bezel-a) 96deg,
-    var(--sanji-bezel-b) 168deg,
-    var(--sanji-bezel-a) 232deg,
-    var(--sanji-bezel-c) 292deg,
-    var(--sanji-bezel-b) 360deg
-  );
-  /* closest-side is load-bearing: a bare `circle` sizes to farthest-corner,
-     so 100% would be the half-diagonal and the ring would swallow the tick
-     band. closest-side makes 100% the actual radius. */
-  -webkit-mask: radial-gradient(circle closest-side,
-    transparent 0 calc(100% - 0.62rem), #000 calc(100% - 0.62rem));
-  mask: radial-gradient(circle closest-side,
-    transparent 0 calc(100% - 0.62rem), #000 calc(100% - 0.62rem));
-  box-shadow:
-    0 0.5rem 1.2rem rgba(0, 0, 0, 0.45),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.35);
-}
+/* A real image brings its own sky. */
+.sanji-hero--art .sanji-stars { display: none; }
 
-/* Glass dome. The highlight tracks the pointer, so the whole thing reads as
-   a curved surface catching light rather than a flat disc. */
-.cmp__glass {
-  transform: translateZ(46px);
-  background:
-    radial-gradient(ellipse 58% 42% at var(--cmp-gx, 30%) var(--cmp-gy, 20%),
-      var(--sanji-glass) 0%, transparent 62%);
-  box-shadow: inset 0 0 2.2rem rgba(0, 0, 0, 0.30);
-  pointer-events: none;
-}
-
-/* ── SVG card parts ───────────────────────────────────────── */
-
-.cmp__card .ring { fill: none; stroke: var(--sanji-rule); }
-.cmp__card .tick-min { stroke: var(--sanji-faint); stroke-width: 0.7; }
-.cmp__card .tick-med { stroke: var(--sanji-mute); stroke-width: 1; }
-.cmp__card .tick-maj { stroke: var(--sanji-ink); stroke-width: 1.5; opacity: 0.75; }
-.cmp__card .deg { fill: var(--sanji-faint); font-size: 8px; letter-spacing: 0.06em; }
-.cmp__card .cardinal { fill: var(--sanji-mute); font-size: 13px; font-weight: 800; }
-.cmp__card .petal-l { fill: var(--sanji-rose-l); }
-.cmp__card .petal-d { fill: var(--sanji-rose-d); }
-.cmp__card .petal-l.is-hot { fill: var(--cmp-hot); opacity: 0.30; }
-.cmp__card .petal-d.is-hot { fill: var(--cmp-hot); opacity: 0.14; }
-.cmp__card .lubber { stroke: var(--cmp-accent, var(--sanji-me)); stroke-width: 2; }
-
-@media (prefers-reduced-motion: no-preference) {
-  .cmp__card .petal-l,
-  .cmp__card .petal-d { transition: fill 250ms, opacity 250ms; }
-}
-
-/* A hairline of page colour keeps the needle legible over a lit petal. */
-.cmp__needle .n-hot {
-  fill: var(--cmp-accent, var(--sanji-me));
-  stroke: var(--md-default-bg-color);
-  stroke-width: 1.5;
-}
-.cmp__needle .n-cold {
-  fill: var(--sanji-mute);
-  opacity: 0.55;
-  stroke: var(--md-default-bg-color);
-  stroke-width: 1.5;
-}
-
-/* ── destinations ─────────────────────────────────────────── */
-
-/* Kept outside .cmp__tilt so the type stays flat and crisp. */
-.cmp__dest {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
+/* ── the card ─────────────────────────────────────────────────────────────
+   Width in px, not rem: Material scales the document root (125%, 137.5% at
+   100em, 150% at 125em), so a rem max-width grows by half again on a wide
+   display. */
+.sanji-card {
+  flex: none;                            /* honour the width, don't shrink it */
+  width: min(100%, 880px);
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: clamp(1.4rem, 3.2vw, 2.6rem);
   align-items: center;
-  text-decoration: none;
-  color: var(--sanji-mute);
-  padding: 0.15rem 0.35rem;
-  border-radius: 0.1rem;
-  white-space: nowrap;
-  translate: -50% -50%;
-  z-index: 2;
+  padding: clamp(1.2rem, 2.8vw, 2rem);
+  border-radius: 6px;
+  background: var(--sanji-card-bg);
+  backdrop-filter: blur(20px) saturate(1.15);
+  -webkit-backdrop-filter: blur(20px) saturate(1.15);
+  box-shadow: 0 0 0 1px var(--sanji-card-edge), var(--sanji-card-shadow);
 }
 
-.md-typeset .cmp__dest { color: var(--sanji-mute); }
-
-.cmp__dest-brg {
-  font-size: 0.5rem;
-  letter-spacing: 0.15em;
-  color: var(--sanji-faint);
-  font-variant-numeric: tabular-nums;
-  line-height: 1.4;
+@media screen and (max-width: 50em) {
+  .sanji-card {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 1.1rem;
+    padding: 1.1rem 1rem 1.3rem;
+  }
+  /* Ragged-right reads better than centred once it wraps past four lines. */
+  .sanji-card__body h1 + p { text-align: left; }
 }
 
-.cmp__dest-name {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  line-height: 1.3;
-}
-
-.cmp__dest:hover,
-.cmp__dest:focus-visible,
-.cmp__dest.is-hot { color: var(--dest-c); }
-
-.cmp__dest:hover .cmp__dest-brg,
-.cmp__dest.is-hot .cmp__dest-brg { color: var(--dest-c); }
-
-.cmp__dest--here { color: var(--sanji-me); cursor: default; }
-.cmp__dest--here .cmp__dest-name::after {
-  content: " ●";
-  font-size: 0.4rem;
-  vertical-align: middle;
-}
-
-/* ── intro panel ──────────────────────────────────────────── */
-
-.sanji-intro { min-width: 0; }
-
-.md-typeset .sanji-intro h1 {
-  font-size: 1.9rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  margin: 0 0 0.5rem;
-}
-
-.md-typeset .sanji-intro p {
-  color: var(--sanji-mute);
-  max-width: 44ch;
-  line-height: 1.75;
-  margin: 0 0 0.6rem;
-}
-
-@media screen and (max-width: 59.9375em) {
-  .md-typeset .sanji-intro h1 { font-size: 1.5rem; }
-  .md-typeset .sanji-intro p { max-width: none; }
-}
-
-.sanji-elsewhere {
-  margin-top: 1.2rem;
-  padding-top: 0.9rem;
-  border-top: 1px solid var(--sanji-rule);
-}
-
-.sanji-elsewhere__cap {
+.sanji-card__portrait {
   display: block;
-  font-size: 0.5rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--sanji-faint);
-  margin-bottom: 0.5rem;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 4px;
+  background: var(--md-default-bg-color--lighter);
 }
 
-/* Material's own .md-social markup, restyled for the panel. */
-.sanji-elsewhere .md-social {
-  padding: 0;
+/* Two class names on purpose: the card carries .md-typeset, and the theme's
+   `.md-typeset img { max-width: 100% }` at (0,1,1) outranks a single class. */
+@media screen and (max-width: 50em) {
+  .sanji-card .sanji-card__portrait { max-width: min(42vw, 148px); }
+}
+
+.sanji-card__body { min-width: 0; }
+
+/* docs/index.md renders three things in order: the greeting, the headline and
+   the rest. Selectors follow that order rather than adding markup. */
+.sanji-card__body > p:first-child {
+  font-size: .7rem;
+  font-weight: 500;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--md-default-fg-color--lighter);
+  margin: 0 0 .7rem;
+}
+
+/* px for the same reason as the card width. */
+.sanji-card__body h1 {
+  font-weight: 300;
+  font-size: clamp(24px, 2.8vw, 40px);
+  line-height: 1.2;
+  letter-spacing: -.04em;
+  color: var(--md-default-fg-color);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* hyphens:none — a narrow column used to break "Part-time" across lines. */
+.sanji-card__body h1 + p {
+  font-size: .82rem;
+  font-weight: 350;
+  line-height: 1.85;
+  color: var(--md-default-fg-color--light);
+  margin: 1.15rem 0 0;
+  text-wrap: pretty;
+  hyphens: none;
+}
+
+.sanji-card__body a {
+  color: var(--md-typeset-a-color);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .22em;
+  text-decoration-color: color-mix(in srgb, var(--md-typeset-a-color) 40%, transparent);
+  transition: color .2s, text-decoration-color .2s;
+}
+.sanji-card__body a:hover,
+.sanji-card__body a:focus-visible {
+  color: var(--md-accent-fg-color);
+  text-decoration-color: currentcolor;
+}
+
+/* ── sections ─────────────────────────────────────────────────────────────
+   76.234375em is Material's own tab breakpoint. Above it .md-tabs shows these
+   already; below it it is hidden and `hide: navigation` empties the drawer, so
+   this is the page's only nav. */
+
+.sanji-card__ways { display: none; }
+
+@media screen and (max-width: 76.234375em) {
+  .sanji-card__ways {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem 1.2rem;
+    margin-top: 1.2rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--sanji-card-edge);
+  }
+}
+
+@media screen and (max-width: 50em) {
+  .sanji-card__ways { justify-content: center; }
+}
+
+.sanji-way {
+  font-size: .88rem;
+  font-weight: 500;
+  color: var(--md-default-fg-color);
+  text-decoration: none;
+  border-bottom: 1px solid var(--md-default-fg-color--lighter);
+  padding-bottom: .08rem;
+  transition: color .15s, border-color .15s;
+}
+.sanji-way:hover,
+.sanji-way:focus-visible,
+.sanji-way--here {
+  color: var(--md-accent-fg-color);
+  border-bottom-color: var(--md-accent-fg-color);
+}
+
+/* ── socials ──────────────────────────────────────────────────────────────
+   Same partial the footer uses. This page has no footer, so without this row
+   it would be the only page with no way out to them. */
+
+.sanji-elsewhere { margin-top: 1.1rem; }
+
+.sanji-hero .md-social {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem;
+  gap: .1rem;
+  padding: 0;
+  margin: 0 -.4rem;
 }
 
-.sanji-elsewhere .md-social__link {
-  width: 1.6rem;
-  height: 1.6rem;
-  color: var(--sanji-mute);
+@media screen and (max-width: 50em) {
+  .sanji-hero .md-social { justify-content: center; }
 }
 
-.sanji-elsewhere .md-social__link:hover { color: var(--md-accent-fg-color); }
-
-.sanji-elsewhere .md-social__link svg {
-  max-height: 0.9rem;
-  vertical-align: -0.1rem;
+.sanji-hero .md-social__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--md-default-fg-color--light);
+  transition: color .15s, transform .15s;
+}
+.sanji-hero .md-social__link svg {
+  width: .88rem;
+  height: .88rem;
+  max-height: none;
+  fill: currentcolor;
+}
+.sanji-hero .md-social__link:hover,
+.sanji-hero .md-social__link:focus-visible {
+  color: var(--md-accent-fg-color);
+  transform: translateY(-1px);
 }
 
+/* ── copyright ───────────────────────────────────────────────────────────
+ * Sits on the bottom of the sky, which grades to the page background, so it is
+ * always reading against --md-default-bg-color exactly as the real footer does. */
+
+/* Out of flow so the card centres against the whole hero. Markup is
+   partials/copyright.html, whose footer colour tokens assume a solid bar. */
 .sanji-hero__copyright {
-  max-width: 61rem;
-  margin: 1.8rem auto 0;
-  padding-top: 0.9rem;
-  border-top: 1px solid var(--sanji-rule);
-  font-size: 0.58rem;
-  letter-spacing: 0.04em;
-  color: var(--sanji-faint);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(.9rem, 2vw, 1.4rem);
+  text-align: center;
 }
 
-.sanji-hero__copyright a { color: inherit; }
+.sanji-hero__copyright .md-copyright {
+  width: auto;
+  margin: 0;
+  padding: 0;
+  font-size: .6rem;
+  letter-spacing: .08em;
+  line-height: 1.7;
+  color: var(--md-default-fg-color--light);
+}
+
+.sanji-hero__copyright .md-copyright__highlight {
+  color: var(--md-default-fg-color--light);
+}
+
+.sanji-hero__copyright a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentcolor 35%, transparent);
+  text-underline-offset: .2em;
+  transition: color .15s;
+}
+.sanji-hero__copyright a:hover,
+.sanji-hero__copyright a:focus-visible {
+  color: var(--md-accent-fg-color);
+  text-decoration-color: currentcolor;
+}
+
+.sanji-hero a:focus-visible {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 3px;
+}
+
+/* ── load sequence ────────────────────────────────────────────────────────
+   One arrival, about a second, then nothing on this page moves again. */
+
+@keyframes sanji-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes sanji-settle {
+  from { opacity: 0; transform: translateY(22px) scale(.985); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sanji-card                      { animation: sanji-settle .85s cubic-bezier(.2,.7,.2,1) both; }
+  .sanji-card__portrait            { animation: sanji-rise .8s ease-out .12s both; }
+  .sanji-card__body > p:first-child{ animation: sanji-rise .8s ease-out .2s both; }
+  .sanji-card__body h1             { animation: sanji-rise .8s ease-out .3s both; }
+  .sanji-card__body h1 + p         { animation: sanji-rise .8s ease-out .42s both; }
+  .sanji-elsewhere                 { animation: sanji-rise .8s ease-out .54s both; }
+  .sanji-hero__copyright           { animation: sanji-rise .8s ease-out .66s both; }
+}
+
+/* The ways row is display:none above the breakpoint; keep the animation from
+   resurrecting it. */
+@media screen and (max-width: 76.234375em) {
+  @media (prefers-reduced-motion: no-preference) {
+    .sanji-card__ways { animation: sanji-rise .8s ease-out .5s both; }
+  }
+}

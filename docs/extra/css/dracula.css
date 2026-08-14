@@ -43,7 +43,12 @@
   --md-code-hl-name-color: #f8f8f2;
   --md-code-hl-operator-color: #ff79c6;
   --md-code-hl-punctuation-color: #f8f8f2;
-  --md-code-hl-comment-color: #6272a4;
+  /* Dracula's canonical Comment is #6272a4, which measures 3.51:1 on the code
+     background and 3.03:1 on the page — both under AA for text, and comments
+     are text. Same hue (225.5) and saturation (0.27), lifted until it clears
+     on both: 5.56:1 and 4.80:1. Still the most recessive token in the set, so
+     comments stay visibly secondary to code. */
+  --md-code-hl-comment-color: #8995ba;
   --md-code-hl-generic-color: #f8f8f2;
   --md-code-hl-variable-color: #f8f8f2;
 
@@ -57,68 +62,6 @@
 
   --md-typeset-table-color: #44475a;
   --md-typeset-table-color--light: #44475a40;
-}
-
-/* ── Light Scheme ────────────────────────────────────────── */
-
-[data-md-color-scheme="dracula-light"] {
-  /* Primary = dark header on light page (GitHub-style) */
-  --md-primary-fg-color: #282a36;
-  --md-primary-fg-color--light: #3a3c4a;
-  --md-primary-fg-color--dark: #1d1e2b;
-  --md-primary-bg-color: #f8f8f2;
-  --md-primary-bg-color--light: #f8f8f280;
-
-  /* Alucard accent. The previous #c0448b measured 4.44:1 on #f8f8f2 — just
-     under AA. This is 7.13:1. */
-  --md-accent-fg-color: #a3144d;
-  --md-accent-fg-color--transparent: #a3144d1a;
-  --md-accent-bg-color: #ffffff;
-  --md-accent-bg-color--light: #ffffff80;
-
-  --md-default-fg-color: #282a36;
-  --md-default-fg-color--light: #282a36cc;
-  --md-default-fg-color--lighter: #282a3666;
-  --md-default-fg-color--lightest: #282a361a;
-  --md-default-bg-color: #f8f8f2;
-  --md-default-bg-color--light: #ffffff;
-  --md-default-bg-color--lighter: #eae9e1;
-  --md-default-bg-color--lightest: #eae9e133;
-
-  --md-typeset-color: #282a36;
-  /* Was #00b3cc — 2.37:1 on #f8f8f2, which fails AA and even the 3:1
-     large-text floor. Alucard cyan is 5.62:1. */
-  --md-typeset-a-color: #036a96;
-  --md-typeset-mark-color: #f1fa8c80;
-
-  --md-code-fg-color: #282a36;
-  --md-code-bg-color: #eae9e1;
-  --md-code-hl-color: #eae9e166;
-  /* Syntax colours from Dracula's official light theme, Alucard — a ground-up
-     rework for contrast rather than a naive inversion of the dark set. */
-  --md-code-hl-number-color: #644ac9;
-  --md-code-hl-special-color: #a3144d;
-  --md-code-hl-function-color: #14710a;
-  --md-code-hl-constant-color: #a34d14;
-  --md-code-hl-keyword-color: #a3144d;
-  --md-code-hl-string-color: #846e15;
-  --md-code-hl-name-color: #282a36;
-  --md-code-hl-operator-color: #a3144d;
-  --md-code-hl-punctuation-color: #282a36;
-  --md-code-hl-comment-color: #6c664b;
-  --md-code-hl-generic-color: #282a36;
-  --md-code-hl-variable-color: #282a36;
-
-  --md-admonition-fg-color: #282a36;
-  --md-admonition-bg-color: #f8f8f2;
-
-  --md-footer-fg-color: #f8f8f2;
-  --md-footer-fg-color--light: #f8f8f280;
-  --md-footer-bg-color: #282a36;
-  --md-footer-bg-color--dark: #1d1e2b;
-
-  --md-typeset-table-color: #eae9e1;
-  --md-typeset-table-color--light: #eae9e140;
 }
 
 /* ── Tab Navigation (both schemes) ──────────────────────── */
