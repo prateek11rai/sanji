@@ -105,6 +105,18 @@ extra_css:
 
 # Extra Configuration
 extra:
+  # Feeds the schema.org JSON-LD on the homepage and résumé. `sameAs` comes
+  # from `social` below, so profiles are listed once.
+  person:
+    name: Prateek Rai
+    jobTitle: Senior Software Engineer I
+    worksFor:
+      name: Atlan
+      url: https://atlan.com
+    alumniOf:
+      name: Thapar Institute of Engineering and Technology
+      url: https://www.thapar.edu
+
   home:
     # Fetched from GitHub, never committed. Renders at ~240px, so 480 covers 2x.
     avatar: https://github.com/prateek11rai.png?size=480
@@ -175,6 +187,11 @@ extra:
     - icon: fontawesome/brands/facebook
       link: https://www.facebook.com/prateek11rai
       name: Facebook
+
+# Build hooks
+hooks:
+  - scripts/llms_txt.py
+  - scripts/json_ld.py
 
 # Plugins
 plugins:

@@ -1,4 +1,5 @@
 ---
+description: One page per project, written up properly rather than left as a repo link.
 hide:
   - feedback
 ---

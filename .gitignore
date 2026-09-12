@@ -4,3 +4,6 @@
 site/
 __pycache__/
 .agents/handoffs/*.md
+.DS_Store
+.agents/backlog.md
+.playwright-mcp/

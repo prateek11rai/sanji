@@ -27,3 +27,10 @@ backdrop = { cmd = "uv run python scripts/backdrop.py", help = "Crop and encode 
 [tool.uv]
 package = false
 
+# The machine-level uv config points at a private index. This project is public
+# and anyone cloning it resolves from PyPI.
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+default = true
+
