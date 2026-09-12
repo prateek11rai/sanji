@@ -136,3 +136,86 @@
   --md-shadow-z2: 0 0.2rem 0.5rem #0009, 0 0 0.05rem #000c;
   --md-shadow-z3: 0 0.2rem 0.75rem #000c, 0 0 0.05rem #000f;
 }
+
+/* ── Links ────────────────────────────────────────────────── */
+
+/* Colour alone doesn't mark a link (WCAG 1.4.1), and cyan on near-white body
+   text is a hue shift, not a contrast one. #8be9fd73 is --md-typeset-a-color at
+   45% alpha, written out because an unsupported color-mix() drops the rule. */
+.md-typeset a {
+  text-decoration: underline;
+  text-decoration-color: #8be9fd73;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition:
+    color 125ms,
+    text-decoration-color 125ms;
+}
+
+.md-typeset a:hover,
+.md-typeset a:focus-visible {
+  text-decoration-color: currentcolor;
+}
+
+/* Links that already advertise themselves some other way. */
+.md-typeset a.md-button,
+.md-typeset .report-pill,
+.md-typeset .headerlink,
+.md-typeset .footnote-backref,
+.md-typeset .grid.cards > ul > li > p:last-child > a,
+.md-typeset .md-post__action a,
+.md-typeset a:has(> img),
+.md-typeset figure a,
+.md-typeset .md-tag,
+.md-typeset .resume-contact a {
+  text-decoration: none;
+}
+
+/* Heading links carry the affordance in their size and colour. */
+.md-typeset :is(h1, h2, h3, h4, h5, h6) > a {
+  text-decoration: none;
+}
+
+/* ── Contact Row ──────────────────────────────────────────── */
+
+/* The résumé header line. .md-button is built for calls to action and reads
+   far too loud here, so these are inline links with a rule under the whole
+   item — a row of separate targets rather than one underlined sentence. */
+.md-typeset .resume-contact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1.1rem;
+  margin: 0.7rem 0 1.4rem;
+  font-size: 0.72rem;
+}
+
+.md-typeset .resume-contact a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  color: var(--md-typeset-a-color);
+  /* --md-typeset-a-color at 45% alpha — see the note on links above. */
+  border-bottom: 1px solid #8be9fd73;
+  padding-bottom: 2px;
+  transition:
+    color 125ms,
+    border-color 125ms;
+}
+
+.md-typeset .resume-contact a:hover,
+.md-typeset .resume-contact a:focus-visible {
+  color: var(--md-accent-fg-color);
+  border-bottom-color: var(--md-accent-fg-color);
+}
+
+/* Inherit the link colour so the whole item changes together on hover. */
+.md-typeset .resume-contact .twemoji {
+  width: 1em;
+  height: 1em;
+}
+
+.md-typeset .resume-contact .twemoji svg {
+  fill: currentcolor;
+}
+
