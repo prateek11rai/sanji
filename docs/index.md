@@ -1,6 +1,7 @@
 ---
 template: home.html
 title: Sanji
+description: Engineer, whichever part of the stack needs one. Where my projects and thoughts go, plus why the site is named after a cook.
 hide:
   - navigation
   - toc
