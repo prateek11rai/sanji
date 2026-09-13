@@ -9,7 +9,12 @@ from __future__ import annotations
 
 import html
 import mimetypes
+import re
 from urllib.parse import urljoin
+
+# Maintenance notes for humans editing the source. Never content, and this
+# file is read by agents — strip them.
+_COMMENT = re.compile(r"<!--.*?-->", re.S)
 
 # Generated navigation surfaces, not content — the posts are listed anyway.
 _GENERATED = ("/blog/archive/", "/blog/category/")
@@ -41,7 +46,7 @@ def on_page_context(context, page, config, nav):
             "date": getattr(page, "meta", {}).get("date"),
             "description": (page.meta or {}).get("description"),
             "is_post": "/blog/20" in url,
-            "markdown": page.markdown or "",
+            "markdown": _COMMENT.sub("", page.markdown or ""),
         }
     )
     return context
