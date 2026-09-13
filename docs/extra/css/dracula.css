@@ -219,3 +219,31 @@
   fill: currentcolor;
 }
 
+
+/* ── Résumé Date Column ───────────────────────────────────── */
+
+/* Dates are the most-scanned thing on a résumé, so they get a column instead
+   of sitting wherever the line ends. The italic line straight after a heading
+   is pulled up onto it and pinned right. Scoped by :has() to the page holding
+   a contact row — nowhere else wants this, least of all blog posts. */
+.md-typeset:has(.resume-contact) :is(h3, h4) + p {
+  float: right;
+  /* Pulls the line up onto the heading. The px term is a measured baseline
+     correction — the em term alone leaves it sitting ~9px low. */
+  margin: calc(-2.1em - 9.5px) 0 0;
+  font-size: 0.7rem;
+  font-style: normal;
+  color: var(--md-default-fg-color--light);
+}
+
+.md-typeset:has(.resume-contact) :is(h3, h4) + p em {
+  font-style: normal;
+}
+
+/* No room for two columns on a phone: let it fall back under the heading. */
+@media screen and (max-width: 44.9375em) {
+  .md-typeset:has(.resume-contact) :is(h3, h4) + p {
+    float: none;
+    margin: 0;
+  }
+}
