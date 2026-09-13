@@ -107,6 +107,9 @@ extra_css:
 extra:
   # Feeds the schema.org JSON-LD on the homepage and résumé. `sameAs` comes
   # from `social` below, so profiles are listed once.
+  #
+  # jobTitle/worksFor/alumniOf restate what docs/resume.md says — change one
+  # and change the other, or the page and the structured data disagree.
   person:
     name: Prateek Rai
     jobTitle: Senior Software Engineer I
@@ -192,6 +195,7 @@ extra:
 hooks:
   - scripts/llms_txt.py
   - scripts/json_ld.py
+  - scripts/strip_comments.py
 
 # Plugins
 plugins:

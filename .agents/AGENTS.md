@@ -10,12 +10,14 @@ This directory contains conventions and tooling for maintaining consistent blog 
 | `.agents/patterns/blog-patterns.md` | Post architecture templates (Technical Guide, Character Analysis, Extension, Rant + One Piece) |
 | `.agents/skills/write-blog-post.md` | Step-by-step workflow for generating a new post |
 | `.agents/commands/new-blog.md` | Executable workflow for creating posts, optionally from handoff docs |
+| `.agents/skills/playwright/SKILL.md` | Previewing the site in a browser: the agent's own server on `:8777`, the long-lived window, cleanup |
 | `.agents/handoffs/` | Directory for handoff docs — Agent A drops project notes here, Agent B consumes them |
 
 ## Critical Rules
 
 - **Never use real-looking tokens or secrets in examples** — always `YOUR_BOT_TOKEN`, `YOUR_API_KEY`, etc.
 - Always run `uv run poe build` before committing a new post
+- The agent previews on port `8777` and never touches the user's `8000` — see the playwright skill
 - Place images in `docs/assets/images/<blog|projects>/<slug>/` before referencing them
 - Image paths are relative: `../../assets/images/<blog|projects>/<slug>/file.jpg`
 - Author is always `prateek11rai` (configured in `docs/blog/.authors.yml`)
