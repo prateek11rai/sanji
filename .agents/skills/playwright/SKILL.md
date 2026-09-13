@@ -50,20 +50,40 @@ and it is one `browser_navigate` away.
 **Do not call `browser_close` until the session is genuinely finished.**
 Closing it discards the window, and the next check pays the startup cost again.
 
-Screenshots must be written **inside the repo** — anywhere else is refused
-with `outside allowed roots`. Use `.playwright-mcp/`, which is gitignored:
+## Seeing vs reading
+
+Two tools, and the cheap one is usually right.
+
+**`browser_snapshot`** returns the accessibility tree — every heading, link,
+href and paragraph as text, inline. Use it to check *what* is on the page:
+copy, heading levels, link targets, table-of-contents structure. It is exact,
+greppable, and costs no image.
+
+**`browser_take_screenshot`** shows *how* it looks: spacing, colour, contrast,
+alignment, wrapping. Use it only when appearance is the question.
+
+**Omit `filename` and the image comes back inline** — one call, and the agent
+sees it immediately. Passing a filename saves a file you then have to `Read`
+back, which is two calls for the same information. Name it only when the file
+itself matters: keeping a before/after pair, or handing the user a path.
 
 ```text
-.playwright-mcp/<name>.png
+browser_take_screenshot                       # inline, preferred
+browser_take_screenshot(filename: ".playwright-mcp/before.png")
 ```
 
-Read the PNG back with the Read tool to actually look at it. Taking a
-screenshot and not reading it verifies nothing.
+Either way a PNG lands in `.playwright-mcp/`, so the cleanup below still
+applies. Paths outside the repo are refused with `outside allowed roots`.
 
-`fullPage: true` for a whole page; omit it for above-the-fold framing.
+`fullPage: true` for the whole page; omit for above-the-fold framing.
 
 ## Reading what you see
 
+- **Confirm before calling something broken.** The snapshot omits accessible
+  names for links that wrap an icon plus text — the résumé contact row shows
+  as bare `link` with only a `/url`, though `textContent` is correct and so is
+  the real accessible name. Check with `browser_evaluate` before filing an
+  accessibility bug that isn't there.
 - **Hover states lie.** The pointer stays where it last clicked, so an element
   may render in its hover colour. Confirm a resting state with
   `browser_evaluate` and `getComputedStyle` rather than trusting the pixels.
@@ -72,7 +92,11 @@ screenshot and not reading it verifies nothing.
   `127.0.0.1` locally and the real domain in a `mkdocs build`. Not a bug.
 - **Check both themes** when touching colour. The palette is dark-only today,
   but link and contrast rules are written against tokens that could change.
-- **Check ~400px wide** for anything involving layout.
+- **Check ~400px wide** for anything involving layout — `browser_resize`, then
+  snapshot or screenshot. The tab bar is hidden below 1220px, so desktop
+  spacing tells you nothing about the phone.
+- **`browser_console_messages`** catches JS errors a screenshot renders past.
+  The GitHub releases 404 on every page is known and harmless.
 
 ## Before finishing
 
@@ -91,4 +115,5 @@ would take the user's down with it.
 - Don't run `mkdocs build` to "check" something — it writes `site/` and tells
   you nothing a browser wouldn't. Build only when verifying the build itself.
 - Don't commit `.playwright-mcp/` (it's ignored — keep it that way).
-- Don't report a visual change as verified without a screenshot you read.
+- Don't report a visual change as verified without having looked at it.
+- Don't screenshot what a snapshot answers — "is the heading right" is text.
