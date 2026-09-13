@@ -42,6 +42,11 @@ changing `mkdocs.yml`, a hook in `scripts/`, or anything under `overrides/`.
 
 ## The browser window
 
+`.mcp.json` at the repo root pins `@playwright/mcp` and sets the viewport to
+1440x820, so every session opens the same size window and the tool can't
+change behaviour under you mid-project. Editing it takes a Claude Code
+restart to apply.
+
 Playwright MCP keeps **one** browser across the whole session — currently
 Chrome. Navigating replaces the page in that window; it does not open a new
 one. So leave it open: the user can then say "check the résumé" at any point
@@ -94,7 +99,9 @@ applies. Paths outside the repo are refused with `outside allowed roots`.
   but link and contrast rules are written against tokens that could change.
 - **Check ~400px wide** for anything involving layout — `browser_resize`, then
   snapshot or screenshot. The tab bar is hidden below 1220px, so desktop
-  spacing tells you nothing about the phone.
+  spacing tells you nothing about the phone. **Resize back to 1440x820
+  afterwards**; the window stays wherever it was left, and the user is looking
+  at it.
 - **`browser_console_messages`** catches JS errors a screenshot renders past.
   The GitHub releases 404 on every page is known and harmless.
 
