@@ -1,6 +1,6 @@
 ---
 name: playwright
-description: Preview the Sanji site in a real browser. Use whenever a change needs to be seen rather than described — layout, palette, contrast, spacing, responsive behaviour — or when the user says "check", "look at it", or "screenshot it". Covers the agent's own preview server, the long-lived browser window, and the cleanup that stops orphaned servers piling up.
+description: Preview the Sanji site in a real browser. Use whenever a change needs to be seen rather than described — layout, palette, contrast, spacing, responsive behaviour — or when the user says "check", "look at it", or "screenshot it". Covers the agent's own preview server on a dedicated port, reading the page, and tearing both down once the check is reported.
 version: 1.0.0
 license: CC0-1.0
 ---
@@ -42,18 +42,21 @@ changing `mkdocs.yml`, a hook in `scripts/`, or anything under `overrides/`.
 
 ## The browser window
 
-`.mcp.json` at the repo root pins `@playwright/mcp` and sets the viewport to
-1440x820, so every session opens the same size window and the tool can't
-change behaviour under you mid-project. Editing it takes a Claude Code
+`.mcp.json` at the repo root pins `@playwright/mcp` and points at
+`.agents/playwright-mcp.json`, which starts Chrome maximised with
+`viewport: null` — the page fills the window instead of rendering into a
+fixed box with grey around it — and passes `--test-type` to drop Chrome's
+"unsupported command-line flag" banner. Editing either takes a Claude Code
 restart to apply.
 
-Playwright MCP keeps **one** browser across the whole session — currently
-Chrome. Navigating replaces the page in that window; it does not open a new
-one. So leave it open: the user can then say "check the résumé" at any point
-and it is one `browser_navigate` away.
+**Don't leave the viewport resized.** `browser_resize` overrides the
+window-filling viewport for the rest of the session, which is what puts a grey
+band around the page. After a narrow check, resize back or reopen the browser.
 
-**Do not call `browser_close` until the session is genuinely finished.**
-Closing it discards the window, and the next check pays the startup cost again.
+Playwright MCP keeps **one** browser per session — currently Chrome.
+Navigating replaces the page rather than opening another window, so within a
+round of checking just navigate; reopening between two screenshots of the same
+change is waste. Once the round is reported, close it — see teardown below.
 
 ## Seeing vs reading
 
@@ -99,13 +102,17 @@ applies. Paths outside the repo are refused with `outside allowed roots`.
   but link and contrast rules are written against tokens that could change.
 - **Check ~400px wide** for anything involving layout — `browser_resize`, then
   snapshot or screenshot. The tab bar is hidden below 1220px, so desktop
-  spacing tells you nothing about the phone. **Resize back to 1440x820
-  afterwards**; the window stays wherever it was left, and the user is looking
-  at it.
+  spacing tells you nothing about the phone. **Undo it afterwards** — the
+  window stays where it was left and the user is looking at it.
 - **`browser_console_messages`** catches JS errors a screenshot renders past.
   The GitHub releases 404 on every page is known and harmless.
 
-## Before finishing
+## Tear down after every check
+
+Not "at the end of the session" — **as soon as the verification round is
+done and reported.** Leave them running and the window sits there showing a
+stale page while a server holds a port in the background, which is how an
+orphaned `mkdocs serve` once survived an entire session.
 
 ```bash
 pkill -f 'mkdocs serve -a 127.0.0.1:8777'   # never the user's :8000
@@ -113,9 +120,14 @@ rm -rf .playwright-mcp                       # screenshots and console logs
 pgrep -fl 'mkdocs serve' || echo "(none)"    # confirm
 ```
 
-An orphaned server holds the port and silently serves a stale branch to the
-next session. Kill it by port, explicitly — `pkill -f 'mkdocs serve'` alone
-would take the user's down with it.
+Then `browser_close`.
+
+Starting again costs ~15s, which is cheaper than the confusion of a window
+showing something that is no longer true. The one exception is when the user
+asks to keep it up to look at — then leave it, and say so.
+
+Kill the server by port, explicitly. A bare `pkill -f 'mkdocs serve'` would
+take the user's :8000 down with it.
 
 ## Don't
 
