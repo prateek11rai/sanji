@@ -22,6 +22,16 @@
   box-sizing: border-box;
 }
 
+/* Wide banners (the 1280×400 README banners): shown whole at their own
+   16:5 ratio, cropped only if the source strays from it. */
+.md-typeset .grid.cards img.card-banner {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 5;
+  object-fit: cover;
+  border-radius: 0.2rem;
+}
+
 /* Whole-card click target: stretch the card's final link (the arrow
    link) over the entire card. Cards must keep exactly one link for
    this to behave predictably. */

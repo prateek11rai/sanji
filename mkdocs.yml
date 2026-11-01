@@ -72,6 +72,16 @@ nav:
   - Me: index.md
   - Projects:
       - Projects: projects/index.md
+      - Undertaker:
+        - Undertaker: projects/undertaker/index.md
+      - Munshi:
+        - Munshi: projects/munshi/index.md
+      - Overheard:
+        - Overheard: projects/overheard/index.md
+      - Pagdandi:
+        - Pagdandi: projects/pagdandi/index.md
+      - PaidYet:
+        - PaidYet: projects/paidyet/index.md
       - DocAid:
         - DocAid: projects/doc-aid/index.md
   - Blog:
